@@ -3,6 +3,17 @@
     "contentVersion": "1.0.0.0",
     "parameters": {},
     "variables": {},
-    "resources": [],
+    "resources": [{
+        "type": "Microsoft.Storage/storageAccounts",
+        "name": "sapmp678900",
+        "apiVersion": "2015-06-15",
+        "location": "[resourceGroup().location]",
+        "tags": {
+            "displayName": "sapmp678900"
+        },
+        "properties": {
+            "accountType": "Standard_LRS"
+        }
+    }],
     "outputs": {}
 }
