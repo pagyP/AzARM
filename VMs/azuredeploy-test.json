@@ -30,7 +30,6 @@
                 "description": "Number of  virtual machines to be created"
             }
         },
-        
         "virtualMachineSize": {
             "type": "string",
             "defaultValue": "Standard_DS2_v2",
@@ -171,16 +170,9 @@
                         "createOption": "FromImage",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
-                        }
-                        
+                        },
+                        "caching": "ReadWrite"
                     }
-                },
-                
-                "dataDisk": {
-                    "name": "concat(parameters('virtualMachineNamePrefix'), copyIndex(1) '-dataDisk')]",
-                    "lun": "0",
-                    "createOption": "empty",
-                    "diskSizeGB":20
                 },
                 "osProfile": {
                     "computerName": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1))]",
@@ -215,6 +207,32 @@
             ]
         },
         {
+            "type": "Microsoft.Compute/disks",
+            "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-dataDisk')]",
+            "apiVersion": "2017-03-30",
+            "location": "[parameters('location')]",
+            "copy":{
+                "name": "dataDiskCopy",
+                "count": "[parameters('virtualMachineCount')]"
+            },
+            "properties":{
+                "creationData":{
+                    "createOption":"Empty"
+                },
+                    "diskSizeGB": 50
+                    
+                
+                    
+                
+            }
+                
+                
+                    
+                
+                
+            
+        },
+        {      
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-NIC1')]",
             "apiVersion": "2016-03-30",

@@ -13,8 +13,8 @@
       },
       "virtualMachineCount": {
         "value": 3
-      
       },
+      
       "virtualMachineSize": {
         "value": "Standard_DS1_v2"
       },
