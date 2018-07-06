@@ -12,7 +12,7 @@
         "value": "MyVM0"
       },
       "virtualMachineCount": {
-        "value": 3
+        "value": 2
       },
       
       "virtualMachineSize": {
@@ -20,6 +20,9 @@
       },
       "operatingSystem": {
         "value": "Server2016"
+      },
+      "storageAccountType": {
+        "value": "Standard_LRS"
       },
       "availabilitySetName": {
         "value": "MyAvailabilitySet"
