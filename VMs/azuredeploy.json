@@ -215,7 +215,7 @@
                         "name": "[concat(parameters('virtualMachineNamePrefix'),copyIndex('VMcopy', 1), '-osDisk')]",
                         "createOption": "FromImage",
                         "managedDisk": {
-                            "storageAccountType": "[concat(parameters('diskType'))]"
+                            "storageAccountType": "[parameters('diskType')]"
                         },
                         "caching": "ReadWrite"
                     },
@@ -224,7 +224,7 @@
                             "name": "dataDisks",
                             "count": "[parameters('numberOfDataDisks')]",
                             "managedDisk":{
-                                "storageAccountType": "[concat(parameters('diskType'))]"
+                                "storageAccountType": "[parameters('diskType')]"
                             },
                             "input": {
                                 "name": "[concat(parameters('virtualMachineNamePrefix'),copyIndex('VMcopy', 1), '-dataDisk', padLeft(copyIndex('dataDisks'), 2, '0'))]",
