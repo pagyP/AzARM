@@ -44,6 +44,22 @@
                 "description": "Virtual Machine Size"
             }
         },
+        "numberOfDataDisks": {
+           "type": "int",
+           "defaultValue": 4,
+           "metadata": {
+                "description": "Number of data disks for each VM."
+            }
+        },
+        "diskType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Premium_LRS",
+                "StandardSSD_LRS"
+            ]
+        },
         "operatingSystem": {
             "type": "string",
             "defaultValue": "Server2016",
@@ -146,8 +162,38 @@
             }
         },
         {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-NIC1')]",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "NICCopy",
+                "count": "[parameters('virtualMachineCount')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/', variables('myVNETName'))]"
+            ]
+        },        
+        {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1))]",
+            "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex('VMcopy', 1))]",
             "apiVersion": "2017-03-30",
             "location": "[parameters('location')]",
             "copy": {
@@ -166,13 +212,30 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(parameters('virtualMachineNamePrefix'),copyIndex(1), '-osDisk')]",
+                        "name": "[concat(parameters('virtualMachineNamePrefix'),copyIndex('VMcopy', 1), '-osDisk')]",
                         "createOption": "FromImage",
                         "managedDisk": {
-                            "storageAccountType": "Premium_LRS"
+                            "storageAccountType": "[concat(parameters('diskType'))]"
                         },
                         "caching": "ReadWrite"
-                    }
+                    },
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[parameters('numberOfDataDisks')]",
+                            "managedDisk":{
+                                "storageAccountType": "[concat(parameters('diskType'))]"
+                            },
+                            "input": {
+                                "name": "[concat(parameters('virtualMachineNamePrefix'),copyIndex('VMcopy', 1), '-dataDisk', padLeft(copyIndex('dataDisks'), 2, '0'))]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "diskSizeGB": 50,
+                                "caching": "None",
+                                "createOption": "Empty"
+                            }
+                        }
+                        
+                    ]
                 },
                 "osProfile": {
                     "computerName": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1))]",
@@ -205,37 +268,8 @@
                 "[concat('Microsoft.Storage/storageAccounts/', variables('diagnosticStorageAccountName'))]",
                 "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-NIC1'))]"
             ]
-        },
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-NIC1')]",
-            "apiVersion": "2016-03-30",
-            "location": "[parameters('location')]",
-            "copy": {
-                "name": "NICCopy",
-                "count": "[parameters('virtualMachineCount')]"
-            },
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIPAllocationMethod": "Dynamic",
-                            "subnet": {
-                                "id": "[variables('subnetRef')]"
-                            }
-                        }
-                    }
-                ],
-                "dnsSettings": {
-                    "dnsServers": []
-                },
-                "enableIPForwarding": false
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/', variables('myVNETName'))]"
-            ]
-        }
+        }        
+        
     ],
     "outputs": {}
 }

@@ -12,13 +12,20 @@
         "value": "MyVM0"
       },
       "virtualMachineCount": {
-        "value": 3
+        "value": 2
       },
+      
       "virtualMachineSize": {
         "value": "Standard_DS1_v2"
       },
       "operatingSystem": {
         "value": "Server2016"
+      },
+      "numberOfDataDisks":{
+        "value": 2
+      },
+      "diskType":{
+        "value": "Standard_LRS"
       },
       "availabilitySetName": {
         "value": "MyAvailabilitySet"
