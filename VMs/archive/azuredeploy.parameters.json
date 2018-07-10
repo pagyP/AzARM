@@ -29,16 +29,8 @@
       },
       "availabilitySetName": {
         "value": "MyAvailabilitySet"
-      },
-      "VirtualNetworkResourceGroup": {
-        "value": "RG_Networks"
-      },
-      "vnetName":{
-        "value": "cbhprodvnet"
-      },
-      "subnetName":{
-        "value": "JumpSubnet"
       }
+      
       }
     }
   
