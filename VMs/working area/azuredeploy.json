@@ -51,6 +51,10 @@
                 "description": "Number of data disks for each VM."
             }
         },
+        "dataDiskSize":{
+            "type": "int",
+            "defaultValue": 20   
+        },
         "diskType": {
             "type": "string",
             "defaultValue": "Standard_LRS",
@@ -101,7 +105,6 @@
     "variables": {
         "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
         "subnetRef": "[concat(variables('vnetID'), '/subnets/', parameters('subnetName'))]",
-        
         "diagnosticStorageAccountName": "[concat('diagst', uniqueString(resourceGroup().id))]",
         "operatingSystemValues": {
             "Server2012R2": {
@@ -215,7 +218,7 @@
                             "input": {
                                 "name": "[concat(parameters('virtualMachineNamePrefix'),copyIndex('VMcopy', 1), '-dataDisk', padLeft(copyIndex('dataDisks'), 2, '0'))]",
                                 "lun": "[copyIndex('dataDisks')]",
-                                "diskSizeGB": 50,
+                                "diskSizeGB": "[parameters('dataDiskSize')]",
                                 "caching": "None",
                                 "createOption": "Empty"
                             }
@@ -249,6 +252,28 @@
                     }
                 }
             },
+            
+            "resources": [
+                {
+                  "apiVersion": "2017-12-01",
+                  "type": "Microsoft.Compute/virtualMachines/extensions",
+                  "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '/bgInfo')]",
+                  "location": "[resourceGroup().location]",
+                  "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineNamePrefix'), copyIndex(1))]"
+                  ],
+                  "properties": {
+                    "publisher": "Microsoft.Compute",
+                    "type": "BGInfo",
+                    "typeHandlerVersion": "2.1",
+                    "settings": {},
+                    "protectedSettings": null
+                  }
+                }
+            ],      
+            
+    
+        
             "dependsOn": [
                 "[concat('Microsoft.Compute/availabilitySets/', parameters('availabilitySetName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', variables('diagnosticStorageAccountName'))]",
@@ -258,4 +283,5 @@
         
     ],
     "outputs": {}
+
 }

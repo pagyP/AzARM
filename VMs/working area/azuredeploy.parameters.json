@@ -24,6 +24,9 @@
       "numberOfDataDisks":{
         "value": 2
       },
+      "dataDiskSize":{
+        "value": 20
+      },
       "diskType":{
         "value": "Standard_LRS"
       },
