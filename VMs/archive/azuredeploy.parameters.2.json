@@ -12,7 +12,7 @@
         "value": "MyVM0"
       },
       "virtualMachineCount": {
-        "value": 1
+        "value": 2
       },
       
       "virtualMachineSize": {
@@ -22,7 +22,7 @@
         "value": "Server2016"
       },
       "numberOfDataDisks":{
-        "value": 1
+        "value": 2
       },
       "dataDiskSize":{
         "value": 20
@@ -37,13 +37,7 @@
         "value": "RG_Networks"
       },
       "vnetName":{
-        "value": "fooprodvnet"
-      },
-      "existingDiagAccount":{
-        "value": "savmdiagsdevtest"
-      },
-      "existingDiagAccountResourceGroup":{
-        "value": "RG_Diags"
+        "value": "cbhprodvnet"
       },
       "subnetName":{
         "value": "JumpSubnet"

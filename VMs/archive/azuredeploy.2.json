@@ -45,15 +45,15 @@
             }
         },
         "numberOfDataDisks": {
-            "type": "int",
-            "defaultValue": 4,
-            "metadata": {
+           "type": "int",
+           "defaultValue": 4,
+           "metadata": {
                 "description": "Number of data disks for each VM."
             }
         },
-        "dataDiskSize": {
+        "dataDiskSize":{
             "type": "int",
-            "defaultValue": 20
+            "defaultValue": 20   
         },
         "diskType": {
             "type": "string",
@@ -82,15 +82,15 @@
                 "description": "Availability Set Name where the VM will be placed"
             }
         },
-        "vnetName": {
+        "vnetName":{
             "type": "string",
             "defaultValue": "myVnet"
         },
-        "virtualNetworkResourceGroup": {
+        "virtualNetworkResourceGroup":{
             "type": "string",
             "defaultValue": "RG_Networks"
         },
-        "subnetName": {
+        "subnetName":{
             "type": "string",
             "defaultValue": "Subnet1"
         },
@@ -120,8 +120,11 @@
         },
         "availabilitySetPlatformFaultDomainCount": "2",
         "availabilitySetPlatformUpdateDomainCount": "5"
+        
     },
     "resources": [
+        
+            
         {
             "name": "[variables('diagnosticStorageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
@@ -175,7 +178,8 @@
                 },
                 "enableIPForwarding": false
             }
-        },
+            
+        },        
         {
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex('VMcopy', 1))]",
@@ -208,7 +212,7 @@
                         {
                             "name": "dataDisks",
                             "count": "[parameters('numberOfDataDisks')]",
-                            "managedDisk": {
+                            "managedDisk":{
                                 "storageAccountType": "[parameters('diskType')]"
                             },
                             "input": {
@@ -219,6 +223,7 @@
                                 "createOption": "Empty"
                             }
                         }
+                        
                     ]
                 },
                 "osProfile": {
@@ -247,51 +252,36 @@
                     }
                 }
             },
+            
             "resources": [
                 {
-                    "apiVersion": "2017-03-30",
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '/bgInfo')]",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineNamePrefix'), copyIndex(1))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Compute",
-                        "type": "BGInfo",
-                        "typeHandlerVersion": "2.1",
-                        "settings": {},
-                        "protectedSettings": null
-                    }
-                },
-                {
-                    "apiVersion": "2017-03-30",
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '/customscript')]",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineNamePrefix'), copyIndex(1))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Compute",
-                        "type": "CustomScriptExtension",
-                        "typeHandlerVersion": "1.7",
-                        "autoUpgradeMinorVersion": "true",
-                        "settings": {
-                            "fileUris": [
-                                "https://saprodautomation.blob.core.windows.net/prodpowershelldsc/Initialise-VM.ps1","https://saprodautomation.blob.core.windows.net/prodpowershelldsc/UKRegion.xml"
-                            ],
-                            "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File Initialise-VM.ps1"
-                        }
-                    }
+                  "apiVersion": "2017-12-01",
+                  "type": "Microsoft.Compute/virtualMachines/extensions",
+                  "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '/bgInfo')]",
+                  "location": "[resourceGroup().location]",
+                  "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineNamePrefix'), copyIndex(1))]"
+                  ],
+                  "properties": {
+                    "publisher": "Microsoft.Compute",
+                    "type": "BGInfo",
+                    "typeHandlerVersion": "2.1",
+                    "settings": {},
+                    "protectedSettings": null
+                  }
                 }
-            ],
+            ],      
+            
+    
+        
             "dependsOn": [
                 "[concat('Microsoft.Compute/availabilitySets/', parameters('availabilitySetName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', variables('diagnosticStorageAccountName'))]",
                 "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-NIC1'))]"
             ]
-        }
+        }        
+        
     ],
     "outputs": {}
+
 }

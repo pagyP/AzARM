@@ -166,6 +166,9 @@
             "apiVersion": "2017-03-15-preview",
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
             "name": "[concat(parameters('WorkspaceName'), '/',  uniquestring('SavedSearch'), '-', copyIndex())]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
             "copy": {
                 "name": "CF-searchCopy",
                 "mode": "Parallel",
