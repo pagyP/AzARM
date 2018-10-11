@@ -1,0 +1,117 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "fooprodvnet": {
+        "type": "object",
+        "defaultValue": {
+            "vnet":{          
+              "name": "fooprodvnet",
+              "addressPrefixes": ["10.239.0.0/16"]
+            },
+            "dhcpOptions":{
+              "dnsServers": ["8.8.8.8","8.8.4.4"]
+            },
+            "subnets":[
+                { "name" : "GatewaySubnet",     "addressPrefix": "10.239.0.0/24"  },
+                { "name" : "AddsSubnet",        "addressPrefix": "10.239.1.0/24"  },
+                { "name" : "UKS-VNET-VFE-Web-Prod",      "addressPrefix": "10.239.2.0/24"  },
+                { "name" : "UKS-VNET-VFE-Web-Test", "addressPrefix": "10.239.3.0/24"  },
+                { "name" : "UKS-VNET-VFE-SQL-Prod",         "addressPrefix": "10.239.4.0/24"  },
+                { "name" : "UKS-VNET-VFE-SQL-Test",        "addressPrefix": "10.239.5.0/24"  }
+                
+            ]
+        },
+        "metadata": {
+            "description": "Virtual network details - see "
+            }
+        },
+        "nsgfoo": {
+            "type": "string",
+            "defaultValue": "NSG-foo",
+            "metadata": {
+                "description":"Name of NSG"
+            }
+        }
+    },    
+    "variables": {  
+        "nsgRules": [
+            { "name": "Allow_RDP_From_Jump_Server1_to_VNET","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "3389","sourceAddressPrefix": "10.239.5.5/32","destinationAddressPrefix": "VirtualNetwork","access": "Allow","priority": 3000,"direction": "Inbound"},
+            { "name": "Allow_RDP_From_Jump_Server2_to_VNET","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "3389","sourceAddressPrefix": "10.239.5.10/32","destinationAddressPrefix": "VirtualNetwork","access": "Allow","priority": 3010,"direction": "Inbound"},
+            { "name": "Allow_RDP_From_RDW_to_RDS","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "3389","sourceAddressPrefix": "10.239.8.5/32","destinationAddressPrefix": "10.239.8.10/32","access": "Allow","priority": 3020,"direction": "Inbound"},
+            { "name": "Allow_RDP_From_P2SVPN_to_VNET","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "3389","sourceAddressPrefix": "172.16.201.0/24","destinationAddressPrefix": "VirtualNetwork","access": "Allow","priority": 3030,"direction": "Inbound"},
+            { "name": "Allow_SSL_From_Internet_to_RDWeb","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "443","sourceAddressPrefix": "Internet","destinationAddressPrefix": "10.239.8.5/32","access": "Allow","priority": 3050,"direction": "Inbound"},
+            { "name": "Allow_9000_From_Internet_to_FST","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "9000","sourceAddressPrefix": "Internet","destinationAddressPrefix": "10.239.3.30/32","access": "Allow","priority": 3060,"direction": "Inbound"},
+            { "name": "Allow_9001_From_Internet_to_FST","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "9001","sourceAddressPrefix": "Internet","destinationAddressPrefix": "10.239.3.30/32","access": "Allow","priority": 3070,"direction": "Inbound"},
+            { "name": "Allow_9002_From_Internet_to_FST","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "9002","sourceAddressPrefix": "Internet","destinationAddressPrefix": "10.239.3.30/32","access": "Allow","priority": 3080,"direction": "Inbound"},
+            { "name": "Allow_9000_From_AppGW_to_FST","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "9000","sourceAddressPrefix": "51.137.105.238/32","destinationAddressPrefix": "10.239.3.30/32","access": "Allow","priority": 3090,"direction": "Inbound"},
+            { "name": "Allow_9001_From_AppGW_to_FST","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "9001","sourceAddressPrefix": "51.137.105.238/32","destinationAddressPrefix": "10.239.3.30/32","access": "Allow","priority": 3100,"direction": "Inbound"},
+            { "name": "Allow_9002_From_AppGW_to_FST","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "9002","sourceAddressPrefix": "51.137.105.238/32","destinationAddressPrefix": "10.239.3.30/32","access": "Allow","priority": 3110,"direction": "Inbound"},
+            { "name": "Deny_RDP_From_VNET","description":"","protocol": "Tcp","sourcePortRange": "*","destinationPortRange": "3389","sourceAddressPrefix": "VirtualNetwork","destinationAddressPrefix": "VirtualNetwork","access": "Deny","priority": 3700,"direction": "Inbound"}
+        ], 
+        "nsgido": {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('nsgfoo'))]"
+            }  
+    },
+    "resources": [
+        {
+            "name": "[parameters('nsgfoo')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "copy":[
+                    {
+                    "name":"securityRules",
+                    "count": "[length(variables('nsgRules'))]",
+                    "input": {        
+                        "name": "[variables('nsgRules')[copyIndex('securityRules')].name]",
+                        "properties": {
+                            "description":              "[variables('nsgRules')[copyIndex('securityRules')].description]",
+                            "protocol":                 "[variables('nsgRules')[copyIndex('securityRules')].protocol]",
+                            "sourcePortRange":          "[variables('nsgRules')[copyIndex('securityRules')].sourcePortRange]",
+                            "destinationPortRange":     "[variables('nsgRules')[copyIndex('securityRules')].destinationPortRange]",
+                            "sourceAddressPrefix":      "[variables('nsgRules')[copyIndex('securityRules')].sourceAddressPrefix]",
+                            "destinationAddressPrefix": "[variables('nsgRules')[copyIndex('securityRules')].destinationAddressPrefix]",
+                            "access":                   "[variables('nsgRules')[copyIndex('securityRules')].access]",
+                            "priority":                 "[variables('nsgRules')[copyIndex('securityRules')].priority]",                
+                            "direction":                "[variables('nsgRules')[copyIndex('securityRules')].direction]"              
+                            }
+                        }
+                    }
+                ]
+            }      
+        },
+        {
+            "name": "[parameters('fooprodvnet').vnet.name]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "comments": "Loop through subnets, but only attach NSG if copyIndex != 0 (i.e. GatewaySubnet)",
+            "dependsOn": [
+              "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('nsgfoo'))]"
+             ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[parameters('fooprodvnet').vnet.addressPrefixes]"
+                },
+                "dhcpOptions":{
+                    "dnsServers": "[parameters('fooprodvnet').dhcpOptions.dnsServers]"
+                },
+                "copy": [
+                    {
+                        "name": "subnets",
+                        "count": "[length(parameters('fooprodvnet').subnets)]",
+                        "input": {
+                        "name": "[parameters('fooprodvnet').subnets[copyIndex('subnets')].name]",
+                        "properties": {
+                            "addressPrefix": "[parameters('fooprodvnet').subnets[copyIndex('subnets')].addressPrefix]",
+                            "networkSecurityGroup": "[if(equals(parameters('fooprodvnet').subnets[copyIndex('subnets')].name, 'GatewaySubnet'), json('null'), variables('nsgido'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        }       
+    ]
+}
