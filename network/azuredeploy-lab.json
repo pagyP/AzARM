@@ -6,7 +6,7 @@
         "type": "object",
         "defaultValue": {
             "vnet":{          
-              "name": "fooprodvnet",
+              "name": "labprodvnet",
               "addressPrefixes": ["10.239.0.0/16"]
             },
             "dhcpOptions":{
@@ -18,7 +18,8 @@
                 { "name" : "UKS-VNET-VFE-Web-Prod",      "addressPrefix": "10.239.2.0/24"  },
                 { "name" : "UKS-VNET-VFE-Web-Test", "addressPrefix": "10.239.3.0/24"  },
                 { "name" : "UKS-VNET-VFE-SQL-Prod",         "addressPrefix": "10.239.4.0/24"  },
-                { "name" : "UKS-VNET-VFE-SQL-Test",        "addressPrefix": "10.239.5.0/24"  }
+                { "name" : "UKS-VNET-VFE-SQL-Test",        "addressPrefix": "10.239.5.0/24"  },
+                {"name": "AzureFirewallSubnet", "addressprefix":"10.239.6.0/24"}
                 
             ]
         },
@@ -28,7 +29,7 @@
         },
         "nsgfoo": {
             "type": "string",
-            "defaultValue": "NSG-foo",
+            "defaultValue": "NSG-lab",
             "metadata": {
                 "description":"Name of NSG"
             }

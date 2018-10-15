@@ -9,20 +9,20 @@
         "value": "Password1234!!"
       },
       "virtualMachineNamePrefix": {
-        "value": "MyVM0"
+        "value": "DC0"
       },
       "virtualMachineCount": {
         "value": 2
       },
       
       "virtualMachineSize": {
-        "value": "Standard_DS1_v2"
+        "value": "Standard_B2s"
       },
       "operatingSystem": {
         "value": "Server2016"
       },
       "numberOfDataDisks":{
-        "value": 2
+        "value": 1
       },
       "dataDiskSize":{
         "value": 20
@@ -31,16 +31,16 @@
         "value": "Standard_LRS"
       },
       "availabilitySetName": {
-        "value": "MyAvailabilitySet"
+        "value": "DCAVSet"
       },
       "VirtualNetworkResourceGroup": {
         "value": "RG_Networks"
       },
       "vnetName":{
-        "value": "cbhprodvnet"
+        "value": "fooprodvnet"
       },
       "subnetName":{
-        "value": "JumpSubnet"
+        "value": "ADDSSubnet"
       }
       }
     }
