@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "virtualMachineAdminUserName": {
+        "value": "azadmin"
+      },
+      "virtualMachineAdminPassword": {
+        "value": "Password1234!!"
+      },
+      "virtualMachineNamePrefix": {
+        "value": "DC0"
+      },
+      "virtualMachineCount": {
+        "value": 2
+      },
+      
+      "virtualMachineSize": {
+        "value": "Standard_B2s"
+      },
+      "operatingSystem": {
+        "value": "Server2016"
+      },
+      "numberOfDataDisks":{
+        "value": 1
+      },
+      "dataDiskSize":{
+        "value": 20
+      },
+      "diskType":{
+        "value": "Standard_LRS"
+      },
+      "availabilitySetName": {
+        "value": "DCAVSet"
+      },
+      "VirtualNetworkResourceGroup": {
+        "value": "RG_Lab_Network_NE"
+      },
+      "vnetName":{
+        "value": "labVnetNE"
+      },
+      "subnetName":{
+        "value": "ADDSSubnet"
+      }
+      }
+    }
+  

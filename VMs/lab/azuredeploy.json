@@ -1,0 +1,298 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineAdminUserName": {
+            "defaultValue": "azadmin",
+            "type": "string",
+            "metadata": {
+                "description": "Administrator Username for the local admin account"
+            }
+        },
+        "virtualMachineAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Administrator password for the local admin account"
+            }
+        },
+        "virtualMachineNamePrefix": {
+            "defaultValue": "MyVM0",
+            "type": "string",
+            "maxLength": 15,
+            "metadata": {
+                "description": "Name of the virtual machine to be created"
+            }
+        },
+        "virtualMachineCount": {
+            "type": "int",
+            "defaultValue": 3,
+            "metadata": {
+                "description": "Number of  virtual machines to be created"
+            }
+        },
+        "virtualMachineSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2",
+            "allowedValues": [
+                "Standard_DS1_v2",
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_B2s",
+                "Standard_DS5_v2"
+            ],
+            "metadata": {
+                "description": "Virtual Machine Size"
+            }
+        },
+        "numberOfDataDisks": {
+            "type": "int",
+            "defaultValue": 4,
+            "metadata": {
+                "description": "Number of data disks for each VM."
+            }
+        },
+        "dataDiskSize": {
+            "type": "int",
+            "defaultValue": 20
+        },
+        "diskType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Premium_LRS",
+                "StandardSSD_LRS"
+            ]
+        },
+        "operatingSystem": {
+            "type": "string",
+            "defaultValue": "Server2016",
+            "metadata": {
+                "description": "Operating System of the Server"
+            },
+            "allowedValues": [
+                "Server2012R2",
+                "Server2016"
+            ]
+        },
+        "availabilitySetName": {
+            "defaultValue": "MyAvailabilitySet",
+            "type": "string",
+            "metadata": {
+                "description": "Availability Set Name where the VM will be placed"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "defaultValue": "myVnet"
+        },
+        "virtualNetworkResourceGroup": {
+            "type": "string",
+            "defaultValue": "RG_Networks"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultValue": "Subnet1"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        }
+    },
+    "variables": {
+        "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+        "subnetRef": "[concat(variables('vnetID'), '/subnets/', parameters('subnetName'))]",
+        "diagnosticStorageAccountName": "[concat('diagst', uniqueString(resourceGroup().id))]",
+        "operatingSystemValues": {
+            "Server2012R2": {
+                "PublisherValue": "MicrosoftWindowsServer",
+                "OfferValue": "WindowsServer",
+                "SkuValue": "2012-R2-Datacenter"
+            },
+            "Server2016": {
+                "PublisherValue": "MicrosoftWindowsServer",
+                "OfferValue": "WindowsServer",
+                "SkuValue": "2016-Datacenter"
+            }
+        },
+        "availabilitySetPlatformFaultDomainCount": "2",
+        "availabilitySetPlatformUpdateDomainCount": "5"
+    },
+    "resources": [
+        {
+            "name": "[variables('diagnosticStorageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[parameters('location')]",
+            "apiVersion": "2016-01-01",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "dependsOn": [],
+            "tags": {
+                "displayName": "diagnosticStorageAccount"
+            },
+            "kind": "Storage"
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[parameters('availabilitySetName')]",
+            "apiVersion": "2017-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "platformFaultDomainCount": "[variables('availabilitySetPlatformFaultDomainCount')]",
+                "platformUpdateDomainCount": "[variables('availabilitySetPlatformUpdateDomainCount')]"
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-NIC1')]",
+            "apiVersion": "2017-10-01",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "NICCopy",
+                "count": "[parameters('virtualMachineCount')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex('VMcopy', 1))]",
+            "apiVersion": "2017-03-30",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "VMcopy",
+                "count": "[parameters('virtualMachineCount')]"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('operatingSystemValues')[parameters('operatingSystem')].PublisherValue]",
+                        "offer": "[variables('operatingSystemValues')[parameters('operatingSystem')].OfferValue]",
+                        "sku": "[variables('operatingSystemValues')[parameters('operatingSystem')].SkuValue]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('virtualMachineNamePrefix'),copyIndex('VMcopy', 1), '-osDisk')]",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('diskType')]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[parameters('numberOfDataDisks')]",
+                            "managedDisk": {
+                                "storageAccountType": "[parameters('diskType')]"
+                            },
+                            "input": {
+                                "name": "[concat(parameters('virtualMachineNamePrefix'),copyIndex('VMcopy', 1), '-dataDisk', padLeft(copyIndex('dataDisks'), 2, '0'))]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "diskSizeGB": "[parameters('dataDiskSize')]",
+                                "caching": "None",
+                                "createOption": "Empty"
+                            }
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1))]",
+                    "adminUsername": "[parameters('virtualMachineAdminUserName')]",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "adminPassword": "[parameters('virtualMachineAdminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-NIC1'))]"
+                        }
+                    ]
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('diagnosticStorageAccountName')), '2016-01-01').primaryEndpoints.blob]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2017-03-30",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '/bgInfo')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineNamePrefix'), copyIndex(1))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "BGInfo",
+                        "typeHandlerVersion": "2.1",
+                        "settings": {},
+                        "protectedSettings": null
+                    }
+                },
+                {
+                    "apiVersion": "2017-03-30",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '/customscript')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineNamePrefix'), copyIndex(1))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.7",
+                        "autoUpgradeMinorVersion": "true",
+                        "settings": {
+                            "fileUris": [
+                                "https://saprodautomation.blob.core.windows.net/prodpowershelldsc/Initialise-VM.ps1","https://saprodautomation.blob.core.windows.net/prodpowershelldsc/UKRegion.xml"
+                            ],
+                            "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File Initialise-VM.ps1"
+                        }
+                    }
+                }
+            ],
+            "dependsOn": [
+                "[concat('Microsoft.Compute/availabilitySets/', parameters('availabilitySetName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('diagnosticStorageAccountName'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachineNamePrefix'), copyIndex(1), '-NIC1'))]"
+            ]
+        }
+    ],
+    "outputs": {}
+}
