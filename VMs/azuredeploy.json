@@ -226,7 +226,8 @@
                     "computerName": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1))]",
                     "adminUsername": "[parameters('virtualMachineAdminUserName')]",
                     "windowsConfiguration": {
-                        "provisionVMAgent": true
+                        "provisionVMAgent": true,
+                        "timeZone": "GMT Standard Time"
                     },
                     "secrets": [],
                     "adminPassword": "[parameters('virtualMachineAdminPassword')]"
