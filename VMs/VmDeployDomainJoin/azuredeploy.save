@@ -98,26 +98,26 @@
         "adminUserName": {
             "type": "string",
             "metadata": {
-                "description": "Domain NetBiosName plus User name of a domain user with sufficient rights to perfom domain join operation. E.g. domain\\username"
+              "description": "Domain NetBiosName plus User name of a domain user with sufficient rights to perfom domain join operation. E.g. domain\\username"
             }
-        },
-        "adminPassword": {
+          },
+          "adminPassword": {
             "type": "securestring",
             "metadata": {
-                "description": "Domain user password"
+              "description": "Domain user password"
             }
-        },
-        "adDomainName": {
+          },
+          "adDomainName": {
             "type": "string",
             "metadata": {
-                "description": "Domain FQDN where the virtual machine will be joined"
+              "description": "Domain FQDN where the virtual machine will be joined"
             }
-        },
-        "ouPath": {
+          },
+          "ouPath": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: \"OU=testOU; DC=domain; DC=Domain; DC=com\""
+      "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: \"OU=testOU; DC=domain; DC=Domain; DC=com\""
             }
         },
         "location": {
@@ -291,6 +291,7 @@
                         "protectedSettings": null
                     }
                 },
+                  
                 {
                     "apiVersion": "2017-03-30",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
@@ -306,8 +307,7 @@
                         "autoUpgradeMinorVersion": "true",
                         "settings": {
                             "fileUris": [
-                                "https://saprodautomation.blob.core.windows.net/prodpowershelldsc/Initialise-VM.ps1",
-                                "https://saprodautomation.blob.core.windows.net/prodpowershelldsc/UKRegion.xml"
+                                "https://saprodautomation.blob.core.windows.net/prodpowershelldsc/Initialise-VM.ps1","https://saprodautomation.blob.core.windows.net/prodpowershelldsc/UKRegion.xml"
                             ],
                             "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File Initialise-VM.ps1"
                         }
@@ -319,8 +319,8 @@
                     "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex(1),'/joindomain')]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineNamePrefix'), copyIndex(1))]"
-                    ],
+                            "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineNamePrefix'), copyIndex(1))]"
+                    ],                    
                     "properties": {
                         "publisher": "Microsoft.Compute",
                         "type": "JsonADDomainExtension",
@@ -333,7 +333,7 @@
                             "OUPath": "[parameters('OUPath')]"
                         },
                         "protectedsettings": {
-                            "Password": "[parameters('adminPassword')]"
+                        "Password": "[parameters('adminPassword')]"
                         }
                     }
                 }
