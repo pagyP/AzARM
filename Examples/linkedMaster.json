@@ -63,7 +63,7 @@
   "properties": {
       "mode": "Incremental",
       "templateLink": {
-          "uri":"https://armtutorials.blob.core.windows.net/linkedtemplates/linkedStorageAccount.json"
+          "uri":"https://github.com/pagyP/AzARM/blob/master/Examples/linkedTemplate.json"
       },
       "parameters": {
           "storageAccountName":{"value": "[variables('storageAccountName')]"},
@@ -176,7 +176,7 @@
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
+            "storageUri": "[reference('linkedTemplate').outputs.storageUri.value]"
           }
         }
       }
