@@ -8,6 +8,7 @@ userPassword=$1
 #install the software
 #sudo dpkg -i openvpn-as-2.1.9-Ubuntu16.amd_64.deb
 sudo apt update && apt -y install ca-certificates wget net-tools
+cd /tmp
 wget -qO - https://as-repository.openvpn.net/as-repo-public.gpg | apt-key add -
 echo "deb http://as-repository.openvpn.net/as/debian bionic main">/etc/apt/sources.list.d/openvpn-as-repo.list
 sudo apt update && apt -y install openvpn-as
