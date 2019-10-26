@@ -182,6 +182,12 @@
             "name": "[concat(parameters('virtualMachineNamePrefix'), copyIndex('VMcopy', 1))]",
             "apiVersion": "2017-03-30",
             "location": "[parameters('location')]",
+            "tags": {
+                "IaCMethod": "ARM",
+                "Customer": "Lab",
+                "Environment": "Dev",
+                "shutDown": "19:00"
+      },
             "copy": {
                 "name": "VMcopy",
                 "count": "[parameters('virtualMachineCount')]"
