@@ -11,6 +11,9 @@
       "dnsNamePrefix": {
         "value": "GEN-UNIQUE"
       },
+      "sourceAddrPrefix": {
+        "value": "GEN-UNIQUE"
+      },
       "adminPasswordOrKey": {
         "value": "GEN-SSH-PUB-KEY"
       }

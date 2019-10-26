@@ -27,6 +27,10 @@
           "description": "The size of the virtual machines used when provisioning"
         }
       },
+      "sourceAddrPrefix": {
+        "type": "string"
+      },
+
       "ubuntuOSVersion": {
         "type": "string",
         "defaultValue": "16.04.0-LTS",
@@ -148,6 +152,19 @@
                 "sourcePortRange": "*",
                 "destinationAddressPrefix": "*"
               }
+            },
+            {
+               "name": "default-allow-ssh",
+            "properties": {
+              "priority": 1000,
+              "sourceAddressPrefix": "[parameters('sourceAddrPrefix')]",
+              "protocol": "Tcp",
+              "destinationPortRange": "22",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
             }
           ]
         }
@@ -263,7 +280,7 @@
             ]
           },
           "protectedSettings": {
-            "commandToExecute": "[concat('bash install_openvpn_access_server.sh ', parameters('openvpnPassword'))]"
+            "commandToExecute": "[concat('bash install_openvpn_access-server.sh ', parameters('openvpnPassword'))]"
           }
         }
       }
