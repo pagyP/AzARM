@@ -2,11 +2,14 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.1",
     "parameters": {
-        "rgName": {
+        "rgNamePrefix": {
             "type": "string"
         },
         "rgLocation": {
             "type": "string"
+        },
+        "instanceCount": {
+            "type": "int"
         }
     },
     "variables": {},
@@ -15,7 +18,11 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[parameters('rgLocation')]",
-            "name": "[parameters('rgName')]",
+            "name": "[concat(parameters('rgNamePrefix'), copyIndex())]",
+            "copy": {
+                "name": "rgCopy",
+                "count": "[parameters('instanceCount')]"
+            },
             "properties": {}
         }
     ],
