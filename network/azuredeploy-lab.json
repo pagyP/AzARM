@@ -6,18 +6,18 @@
         "type": "object",
         "defaultValue": {
             "vnet":{          
-              "name": "labvnetNE",
-              "addressPrefixes": ["10.239.0.0/16"]
+              "name": "bcprdvntspkx001",
+              "addressPrefixes": ["10.61.0.0/16"]
             },
             "dhcpOptions":{
               "dnsServers": ["8.8.8.8","8.8.4.4"]
             },
             "subnets":[
-                { "name" : "GatewaySubnet",     "addressPrefix": "10.239.0.0/24"  },
-                { "name" : "AddsSubnet",        "addressPrefix": "10.239.1.0/24"  }
-                
-                
-                
+                { "name" : "bcprdsublasn001-10.61.0.0-27", "addressPrefix": "10.61.0.0/27"  },
+                { "name" : "bcprdsublasn001-10.61.0.32-28","addressPrefix": "10.61.0.32/28"  },
+                { "name" : "bcprdsublasn001-10.61.0.48-28","addressPrefix": "10.61.0.48/28"  },
+                { "name" : "bcprdsublasn001-10.61.0.64-28","addressPrefix": "10.61.0.64/28"  },
+                { "name" : "bcprdsublasn001-10.61.0.80-28","addressPrefix": "10.61.0.80/28"  }     
             ]
         },
         "metadata": {
