@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "value": "bcprdlawmonx044"
+            "value": "bcprdlawmonx046"
         },
         "location": {
             "value": "uksouth"
@@ -12,7 +12,7 @@
             "value": 30
         },
         "omsAutomationAccountName": {
-            "value": "bcprdaccauto001"
+            "value": "bcprdaccauto082"
         },
         "sku": {
             "value": "PerGB2018"

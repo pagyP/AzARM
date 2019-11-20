@@ -110,6 +110,32 @@
             "tags": {}
         },
         {
+            "type": "Microsoft.Automation/automationAccounts/modules",
+            "apiVersion": "2015-10-31",
+            "name": "[concat(parameters('omsAutomationAccountName'), '/Az.Accounts')]",
+            "dependsOn": [
+                 "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+            ],
+            "properties": {
+                "contentLink": {
+                    "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/az.accounts.1.6.4.nupkg"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Automation/automationAccounts/modules",
+            "apiVersion": "2015-10-31",
+            "name": "[concat(parameters('omsAutomationAccountName'), '/Az.Resources')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+            ],
+            "properties": {
+                "contentLink": {
+                    "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/az.resources.1.7.1.nupkg"
+                }
+            }
+        },
+        {
             "apiVersion": "2015-11-01-preview",
             "location": "[parameters('location')]",
             "name": "[variables('Updates').Name]",
