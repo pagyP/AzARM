@@ -1,0 +1,31 @@
+﻿{
+
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+
+  "contentVersion": "1.0.0.0",
+
+  "parameters": {
+
+    "policyName": {
+      "value": "DailyBackupPolicy2"
+    },
+
+    "scheduleRunTimes": {
+      "value": [ "2020-01-06T19:00:00Z" ]
+    },
+
+    "timeZone": {
+      "value": "GMT Standard Time"
+    },
+
+    "vaultName": {
+      "value": "vaultpmp123"
+    },
+
+    "dailyRetentionDurationCount": {
+      "value": 30
+    }
+
+  }
+
+}

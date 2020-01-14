@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vaultName": {
+        "value": "RSvault1njfffdk"
+      },
+      "policyName": {
+          "value": "DailyBackupPolicy1"
+      },
+      "scheduleRunTimes": {
+          "value": [ "2017-01-26T05:30:00Z" ]
+      },
+      "timeZone": {
+          "value": "UTC"
+      },
+      "dailyRetentionDurationCount": {
+          "value": 30
+      },
+      "daysOfTheWeek": {
+          "value": []
+      },
+      "weeklyRetentionDurationCount": {
+          "value": 0
+      },
+      "monthlyRetentionDurationCount": {
+          "value": 0
+      },
+      "monthsOfYear": {
+          "value": [ ]
+      },
+      "yearlyRetentionDurationCount": {
+          "value": 0
+      }
+    }
+  }

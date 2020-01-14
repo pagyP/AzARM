@@ -1,0 +1,1155 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the environnment the resources are for"
+      }
+    },
+    "srcIPInboundNSG": {
+        "type":"string",
+        "metadata": {
+            "description": "Source IP of inbound management"
+        }
+    },
+    "fwAdminName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the pivileged account that should be used to ssh and login to the PanOS web portal."
+      }
+    },
+    "fwAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password to the privileged account used to ssh and login to the PanOS web portal."
+      }
+    }
+  },
+
+  "variables": {
+
+    "environmentNameLower": "[toLower(parameters('environmentName'))]",
+
+    /* Tier1 Hub subnet */
+    "virtualNetworkNameTier1Hub": "bcprdvnthubv001",
+    "virtualNetworkIdTier1Hub": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkNameTier1Hub'))]",
+    "virtualNetworkTier1HubAddressPrefix": "10.60.0.0/16",
+
+    /* Gateway + DC's + Firewall (NVA's) subnets */
+    "tier1gwSubnetName": "GatewaySubnet",
+    "tier1gwSubnetPrefix": "10.60.0.0/26",
+    "tier1gwSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkNameTier1Hub'), variables('tier1gwSubnetName'))]",
+    "tier1dsSubnetName": "bcprdsubdcxn001-10.60.0.64_26",
+    "tier1dsSubnetPrefix": "10.60.0.64/26",
+    "tier1dsSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkNameTier1Hub'), variables('tier1dsSubnetName'))]",
+    "tier1fwmgmtSubnetName": "fwmgmt",
+    "tier1fwmgmtSubnetPrefix": "10.60.1.0/24",
+    "tier1fwmgmtSubnetStartAddress": "10.60.1.4",
+    "tier1fwmgmtSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkNameTier1Hub'), variables('tier1fwmgmtSubnetName'))]",
+    "tier1fwtrustSubnetName": "fwtrust",
+    "tier1fwtrustSubnetPrefix": "10.60.2.0/24",
+    "tier1fwtrustSubnetStartAddress": "10.60.2.4",
+    "tier1fwtrustSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkNameTier1Hub'), variables('tier1fwtrustSubnetName'))]",
+    "tier1fwuntrustSubnetName": "fwuntrust",
+    "tier1fwuntrustSubnetPrefix": "10.60.3.0/24",
+    "tier1fwuntrustSubnetStartAddress": "10.60.3.4",
+    "tier1fwuntrustSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkNameTier1Hub'), variables('tier1fwuntrustSubnetName'))]",
+
+
+    /* South Development subnets */
+    "prodNetworkNameSouth": "bcprdvntnetv001",
+    "prodNetworkIdSouth": "[resourceId('Microsoft.Network/virtualNetworks', variables('prodNetworkNameSouth'))]",
+    "prodNetworkSouthAddressPrefix": "10.61.0.0/16",
+
+    /* Secure Spoke variables */
+    "secureSpokeName": "bcprdvntsecv001",
+    "secureSpokeNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('secureSpokeName'))]",
+    "secureSpokeAddressPrefix": "10.63.0.0/16",
+
+    // Web Spoke variables
+    "webSpokeName": "bcprdvntwebv001",
+    "webSpokeNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('webSpokeName'))]",
+    "webSpokeAddressPrefix": "10.64.0.0/16",
+
+    /*Applications subnets */
+    "sub1SubnetName": "bcprdsubclkn001-10.61.0.0_27",
+    "sub1SubnetPrefix": "10.61.0.0/27",
+    "sub1SubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('prodNetworkNameSouth'), variables('sub1SubnetName'))]",
+    "sub2SubnetName": "bcprdsubaxmn001-10.61.0.32_28",
+    "sub2SubnetPrefix": "10.61.0.32/28",
+    "sub2SubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('prodNetworkNameSouth'), variables('sub2SubnetName'))]",
+    "sub3SubnetName": "bcprdsubbirn001-10.61.0.48_28",
+    "sub3SubnetPrefix": "10.61.0.48/28",
+    "sub3SubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('prodNetworkNameSouth'), variables('sub3SubnetName'))]",
+    "sub4SubnetName": "bcprdsubcaln001-10.61.0.64_28",
+    "sub4SubnetPrefix": "10.61.0.64/28",
+    "sub4SubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('prodNetworkNameSouth'), variables('sub4SubnetName'))]",
+    "sub5SubnetName": "bcprdsubiawn001-10.61.0.80_28",
+    "sub5SubnetPrefix": "10.61.0.80/28",
+    "sub5SubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('prodNetworkNameSouth'), variables('sub5SubnetName'))]",
+
+    /* Azure Bastion Subnet */
+    "BastionSubnetName": "AzureBastionSubnet",
+    "BastionSubnetPrefix": "10.61.99.0/27",
+    "BastionSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('prodNetworkNameSouth'), variables('BastionSubnetName'))]",
+
+    /* Palo Alto vm series */
+    "fwNamePrefix": "BCC-PanFW-",
+    "panPublicIPName": "[concat(variables('fwNamePrefix'), '-fwMgmtPublicIP')]",
+    "panfwPublicIPDnsName": "[concat('bcc-', variables('environmentNameLower'), '-fw-pip')]",
+    "nicName": "[concat(variables('fwNamePrefix'), '-eth')]",
+    "vmSize": "Standard_DS3_v2",
+    "PASku": "byol",
+    "PAVersion": "latest",
+    "PACount": 2,
+
+    "uniqueId": "[uniqueString(resourceGroup().id)]",
+    "availabilitySetName": "BCC-PanFW-AS",
+    "untrustLBName": "bcc-fw-untrust-lb",
+    "trustLBName": "bcc-fw-trust-lb"
+
+
+  },
+
+  "resources": [
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "bcprdnsgclka001",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "ClickMobile",
+        "Function": "Network Security Group",
+        "Application Owner": "Zara Naylor",
+        "Directorate": "City Growth, Investment and Infrastructure including Culture",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "blockAll",
+            "properties": {
+              "access": "Deny",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*",
+              "direction": "Inbound",
+              "priority": 4095,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "block all traffic except what we've explicitly allowed"
+            }
+          },
+          {
+            "name": "allowVNetRDP",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389-4500",
+              "direction": "Inbound",
+              "priority": 3960,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "allow RDP access to the clickmobile subnet"
+
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "bcprdnsgaxma001",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Axiom",
+        "Function": "Network Security Group",
+        "Application Owner": "Gemma Hilton",
+        "Directorate": "Commercialisation",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "blockAll",
+            "properties": {
+              "access": "Deny",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*",
+              "direction": "Inbound",
+              "priority": 4095,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "block all traffic except what we've explicitly allowed"
+            }
+          },
+          {
+            "name": "allowVNetRDP",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389-4500",
+              "direction": "Inbound",
+              "priority": 3960,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "allow RDP access to the axiom subnet"
+
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "bcprdnsgbira001",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [],
+      "tags": {
+        "Environment": "Development",
+        "Application": "BI Reports",
+        "Function": "Network Security Group",
+        "Application Owner": "Paul Horton",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "blockAll",
+            "properties": {
+              "access": "Deny",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*",
+              "direction": "Inbound",
+              "priority": 4095,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "block all traffic except what we've explicitly allowed"
+            }
+          },
+          {
+            "name": "allowVNetRDP",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389-4500",
+              "direction": "Inbound",
+              "priority": 3960,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "allow RDP access to the bi reports subnet"
+
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "bcprdnsgcala001",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "CalmView",
+        "Function": "Network Security Group",
+        "Application Owner": "Malcolm Boyns",
+        "Directorate": "City Growth, Investment and Infrastructure including Culture",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "blockAll",
+            "properties": {
+              "access": "Deny",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*",
+              "direction": "Inbound",
+              "priority": 4095,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "block all traffic except what we've explicitly allowed"
+            }
+          },
+          {
+            "name": "allowVNetRDP",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389-4500",
+              "direction": "Inbound",
+              "priority": 3960,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "allow RDP access to the calm view subnet"
+
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "bcprdnsgiawa001",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [],
+      "tags": {
+        "Environment": "Development",
+        "Application": "Information@Work",
+        "Function": "Network Security Group",
+        "Application Owner": "Kevin Smith",
+        "Directorate": "Finance",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "blockAll",
+            "properties": {
+              "access": "Deny",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*",
+              "direction": "Inbound",
+              "priority": 4095,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "block all traffic except what we've explicitly allowed"
+            }
+          },
+          {
+            "name": "allowVNetRDP",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389-4500",
+              "direction": "Inbound",
+              "priority": 3960,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "allow RDP access to the information@work subnet"
+
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "bcprdnsgdcxx001",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Domain Services",
+        "Function": "Netowrk Security Group",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "blockAll",
+            "properties": {
+              "access": "Deny",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*",
+              "direction": "Inbound",
+              "priority": 4095,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "block all traffic except what we've explicitly allowed"
+            }
+          },
+          {
+            "name": "allowVNetRDP",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389-4500",
+              "direction": "Inbound",
+              "priority": 3960,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "description": "allow RDP access to the tier1 ds subnet"
+
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "bcprdnsgfwxx001",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "NVA - Firewall",
+        "Function": "Network Security Group",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-Outside-From-IP",
+            "properties": {
+              "description": "Rule",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "[parameters('srcIPInboundNSG')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Allow-Intra",
+            "properties": {
+              "description": "Allow intra network traffic",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "[concat(variables('tier1fwmgmtSubnetPrefix'))]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          },
+          {
+
+            "name": "Default-Deny",
+            "properties": {
+              "description": "Default-Deny if we don't match Allow rule",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 200,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+
+
+    /* South Development VNET */
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('prodNetworkNameSouth')]",
+      "apiVersion": "2018-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      /* If dependency is not set then it will fail to deploy as the API executes random the code */
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'bcprdnsgclka001')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'bcprdnsgaxma001')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'bcprdnsgbira001')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'bcprdnsgcala001')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'bcprdnsgiawa001')]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('prodNetworkSouthAddressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('sub1SubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('sub1SubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups','bcprdnsgclka001')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('sub2SubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('sub2SubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'bcprdnsgaxma001')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('sub3SubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('sub3SubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'bcprdnsgbira001')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('sub4SubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('sub4SubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'bcprdnsgcala001')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('sub5SubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('sub5SubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'bcprdnsgiawa001')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('BastionSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('BastionSubnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+
+    /* Tier1 Hub VNET */
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkNameTier1Hub')]",
+      "apiVersion": "2018-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Hub Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'bcprdnsgdcxx001')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'bcprdnsgfwxx001')]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('virtualNetworkTier1HubAddressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('tier1dsSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('tier1dsSubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'bcprdnsgdcxx001')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('tier1fwmgmtSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('tier1fwmgmtSubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'bcprdnsgfwxx001')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('tier1fwtrustSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('tier1fwtrustSubnetPrefix')]"
+              }
+          },
+          {
+            "name": "[variables('tier1fwuntrustSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('tier1fwuntrustSubnetPrefix')]"
+              }
+          },
+          {
+            "name": "[variables('tier1gwSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('tier1gwSubnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+
+    /* Secure Spoke VNET */
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('secureSpokeName')]",
+      "apiVersion": "2018-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Secure Spoke Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('secureSpokeAddressPrefix')]"
+          ]
+        }
+      }
+    },
+
+    /* Web Spoke VNET */
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('webSpokeName')]",
+      "apiVersion": "2018-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Web Spoke Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('webSpokeAddressPrefix')]"
+          ]
+        }
+      }
+    },
+
+    /* VM Series deployment objects */
+    {
+      "apiVersion": "2017-09-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1),'-mgmt-pip')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      },
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "dnsSettings": {
+          "domainNameLabel": "[concat('fw',copyIndex(1),'management', variables('uniqueId'))]"
+        }
+
+      },
+      "copy": {
+
+        "name": "managementPIPCopy",
+        "count": "[variables('PACount')]"
+      }
+
+    },
+
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1),'-untrust-pip')]",
+      "apiVersion": "2017-08-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      },
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "dnsSettings": {
+          "domainNameLabel": "[concat('fw',copyIndex(1),'untrust', variables('uniqueId'))]"
+        }
+      },
+      "copy": {
+        "name": "UntrustPIPCopy",
+        "count": "[variables('PACount')]"
+      }
+    },
+
+    {
+
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(variables('untrustLBName'),'-pip')]",
+      "apiVersion": "2017-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "dnsSettings": {
+          "domainNameLabel": "[concat('lbfw', variables('uniqueId'))]"
+        }
+      }
+    },
+
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1),'-mgmt-nic')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-mgmt-pip'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'bcprdnsgfwxx001')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1),'-mgmt')]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              //"privateIpAddress": "[concat(variables('tier1fwmgmtSubnetPrefix'),copyIndex(variables('tier1fwmgmtSubnetStartAddress')))]",
+              "privateIpAddress": "[variables('tier1fwmgmtSubnetStartAddress')]",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-mgmt-pip'))]"
+              },
+              "subnet": {
+                "id": "[variables('tier1fwmgmtSubnetRef')]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'bcprdnsgfwxx001')]"
+        }
+      },
+      "copy": {
+        "name": "managementNICCopy",
+        "count": "[variables('PACount')]"
+      }
+    },
+
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1),'-untrust-nic')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/loadBalancers', variables('untrustLBName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-untrust-pip'))]"
+      ],
+      "properties": {
+        "enableIPForwarding": true,
+        "ipConfigurations": [
+          {
+            "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1),'-untrust')]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              // "privateIpAddress": "[concat(variables('tier1fwuntrustSubnetPrefix'),copyIndex(add(variables('tier1fwuntrustSubnetStartAddress'),1)))]",
+              "privateIpAddress": "[variables('tier1fwuntrustSubnetStartAddress')]",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-untrust-pip'))]"
+              },
+              "subnet": {
+                "id": "[variables('tier1fwuntrustSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('untrustLBName')), '/backendAddressPools/', variables('availabilitySetName'))]"
+                }
+              ]
+            }
+          }
+        ]
+      },
+
+      "copy": {
+        "name": "UntrustNICCopy",
+        "count": "[variables('PACount')]"
+
+      }
+
+    },
+
+    {
+
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1),'-trust-nic')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/loadBalancers', variables('trustLBName'))]"
+      ],
+      "properties": {
+        "enableIPForwarding": true,
+        "ipConfigurations": [
+          {
+            "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1),'-trust')]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              //"privateIpAddress": "[concat(variables('tier1fwtrustSubnetPrefix'),copyIndex(add(variables('tier1fwtrustSubnetStartAddress'),1)))]",
+              "privateIpAddress": "[variables('tier1fwtrustSubnetStartAddress')]",
+              "subnet": {
+                "id": "[variables('tier1fwtrustSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('trustLBName')), '/backendAddressPools/', variables('availabilitySetName'))]"
+                }
+              ]
+            }
+          }
+        ]
+      },
+
+      "copy": {
+        "name": "TrustNICCopy",
+        "count": "[variables('PACount')]"
+      }
+    },
+
+    {
+
+      "apiVersion": "2017-03-30",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('fwNamePrefix'),'-',copyIndex(1))]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+
+      "plan": {
+        "name": "[variables('PASku')]",
+        "product": "vmseries1",
+        "publisher": "paloaltonetworks"
+      },
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[variables('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('fwNamePrefix'),copyIndex(1))]",
+          "adminUsername": "[parameters('fwAdminName')]",
+          "adminPassword": "[parameters('fwAdminPassword')]"
+
+        },
+
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "paloaltonetworks",
+            "offer": "vmseries1",
+            "sku": "[variables('PASku')]",
+            "version": "[variables('PAVersion')]"
+          },
+
+          "osDisk": {
+            "name": "[concat(variables('fwNamePrefix'),copyIndex(1),'_OSDisk')]",
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-mgmt-nic'))]",
+              "properties": {
+                "primary": true
+              }
+            },
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-untrust-nic'))]",
+              "properties": {
+                "primary": false
+              }
+            },
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-trust-nic'))]",
+              "properties": {
+                "primary": false
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-mgmt-nic'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-untrust-nic'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('fwNamePrefix'),'-',copyIndex(1),'-trust-nic'))]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+      ],
+      "copy": {
+        "name": "PAVMCopy",
+        "count": "[variables('PACount')]"
+      }
+    },
+    {
+      "apiVersion": "2017-03-30",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+
+      "properties": {
+        "platformUpdateDomainCount": 5,
+        "platformFaultDomainCount": 2
+      },
+      "sku": {
+        "name": "Aligned"
+      }
+    },
+    {
+
+      "type": "Microsoft.Network/loadBalancers",
+      "name": "[variables('untrustLBName')]",
+      "apiVersion": "2017-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[concat(variables('untrustLBName'),'-FrontEnd')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('untrustLBName'),'-pip'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('availabilitySetName')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "LB-Public-HTTP",
+            "properties": {
+              "frontendIPConfiguration": {
+
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('untrustLBName')), '/frontendIPConfigurations/', variables('untrustLBName'),'-FrontEnd')]"
+              },
+              "frontendPort": 80,
+              "backendPort": 80,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "Tcp",
+              "loadDistribution": "Default",
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('untrustLBName')), '/backendAddressPools/',variables('availabilitySetName'))]"
+              },
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('untrustLBName')), '/probes/TCP-22')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "TCP-22",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 22,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+
+        "inboundNatRules": [],
+        "outboundNatRules": [],
+        "inboundNatPools": []
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('untrustLBName'),'-pip'))]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/loadBalancers",
+      "name": "[variables('trustLBName')]",
+      "apiVersion": "2017-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "Environment": "Development",
+        "Application": "Networking",
+        "Function": "Development Virtual Network",
+        "Application Owner": "Tim Farrance",
+        "Directorate": "Policy, Strategy and ICT",
+        "Cost Centre": "11302"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[concat(variables('trustLBName'),'-FrontEnd')]",
+            "properties": {
+              "privateIPAddress": "[concat(variables('tier1fwtrustSubnetPrefix'),variables('tier1fwtrustSubnetStartAddress'))]",
+              "privateIPAllocationMethod": "Static",
+              "subnet": {
+                "id": "[variables('tier1fwtrustSubnetRef')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('availabilitySetName')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "Allow-All-Out",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('trustLBName')), '/frontendIPConfigurations/', variables('trustLBName'),'-FrontEnd')]"
+              },
+              "frontendPort": 0,
+              "backendPort": 0,
+              "enableFloatingIP": true,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "All",
+              "loadDistribution": "Default",
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('trustLBName')), '/backendAddressPools/', variables('availabilitySetName'))]"
+              },
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('trustLBName')), '/probes/TCP-22')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "TCP-22",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 22,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+        "inboundNatRules": [],
+        "outboundNatRules": [],
+        "inboundNatPools": []
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]",
+        "[resourceId('Microsoft.Network/virtualnetworks/subnets',  variables('virtualNetworkNameTier1Hub'), variables('tier1fwtrustSubnetRef'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+
+}
+

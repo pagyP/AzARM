@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "Production"
+    },
+    "paloAltoAdminName": {
+      "value": "nvaadmin"
+    },
+    "paloAltoAdminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/227152d7-5195-4431-bf3d-f1744cf9de51/resourceGroups/bcprdrgpazkx001/providers/Microsoft.KeyVault/vaults/bcprdkeyxxxx001etrqqdw3"
+        },
+        "secretName": "nvaAdminPassword"
+      }
+    },
+    "vpnSharedKey": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/227152d7-5195-4431-bf3d-f1744cf9de51/resourceGroups/bcprdrgpazkx001/providers/Microsoft.KeyVault/vaults/bcprdkeyxxxx001etrqqdw3"
+        },
+        "secretName": "vpnPreSharedKey"
+      }
+    }
+  }
+}
