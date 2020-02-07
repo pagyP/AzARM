@@ -16,6 +16,7 @@
                 "description": "The name of the Event GRid API Connection"
             }
         }
+        
     },
     "variables": {},
     "resources": [
@@ -27,7 +28,8 @@
             "tags": {},
             "properties": {
                 "displayName": "[parameters('teamsAPIConnectionName')]",
-                "parameterValues": {},
+                "parameterValues": {
+                },
                 "customParameterValues": {},
                 "nonSecretParameterValues": {},
                 "api": {
@@ -43,7 +45,13 @@
             "tags": {},
             "properties": {
                 "displayName": "[parameters('eventGridAPIConnector')]",
-                "parameterValues": {},
+                "parameterValues": {
+                    "token:clientId": "clientid",
+                    "token:clientSecret": "clientsecret",
+                    "token:TenantId": "tenantid",
+                    "token:grantType": "client_credentials"
+
+                },
                 "customParameterValues": {},
                 "nonSecretParameterValues": {},
                 "api": {
@@ -91,7 +99,8 @@
                                                 "Microsoft.Resources.ResourceWriteSuccess"
                                             ]
                                         },
-                                        "topic": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115"
+                                        //"topic": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115"
+                                        "topic": "[concat('/subscriptions/', subscription().subscriptionId)]"
                                     }
                                 },
                                 "host": {
@@ -115,7 +124,7 @@
                                     "inputs": {
                                         "body": {
                                             "body": {
-                                                "content": "<p><strong>User</strong> @{triggerBody()?['data']?['claims']?['name']} <strong>Performed</strong> @{triggerBody()?['eventType']} <strong>At </strong>&nbsp;<strong>Time</strong> @{triggerBody()?['eventTime']} &nbsp;<strong>On &nbsp;Resource</strong> @{triggerBody()?['data']?['resourceUri']}</p>",
+                                                "content": "<p><strong>User</strong> @{triggerBody()?['data']?['claims']?['name']} <strong>Performed</strong> @{triggerBody()?['data']?['authorization']?['action']} <strong>At </strong>&nbsp;<strong>Time</strong> @{triggerBody()?['eventTime']} &nbsp;<strong>On &nbsp;Resource</strong> @{triggerBody()?['data']?['resourceUri']}&nbsp;</p>",
                                                 "contentType": "html"
                                             }
                                         },
@@ -126,6 +135,7 @@
                                         },
                                         "method": "post",
                                         "path": "/v3/beta/teams/@{encodeURIComponent('43da2e9e-248f-4440-bce4-6fde171da3ab')}/channels/@{encodeURIComponent('19:074dc21593fd442ba019076d5c3e577b@thread.skype')}/messages"
+                                       
                                     }
                                 }
                             },
@@ -144,6 +154,12 @@
                                                 "contains": [
                                                     "@triggerBody()?['data']?['authorization']?['scope']",
                                                     "test1"
+                                                ]
+                                            },
+                                            {
+                                                "contains": [
+                                                    "@triggerBody()?['data']?['authorization']?['scope']",
+                                                    "test3"
                                                 ]
                                             }
                                         ]
@@ -168,12 +184,14 @@
                             "azureeventgrid": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('eventGridAPIConnector'))]",
                                 "connectionName": "azureeventgrid",
-                                "id": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/providers/Microsoft.Web/locations/uksouth/managedApis/azureeventgrid"
+                                //"id": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/providers/Microsoft.Web/locations/uksouth/managedApis/azureeventgrid"
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/uksouth/managedApis/azureeventgrid')]"
                             },
                             "teams": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('teamsAPIConnectionName'))]",
                                 "connectionName": "teams",
-                                "id": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/providers/Microsoft.Web/locations/uksouth/managedApis/teams"
+                              // "id": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/providers/Microsoft.Web/locations/uksouth/managedApis/teams"
+                               "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/uksouth/managedApis/teams')]"
                 }
             }
         }
