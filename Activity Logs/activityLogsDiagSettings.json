@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+    {
+			"type": "Microsoft.Insights/diagnosticSettings",
+			"apiVersion": "2017-05-01-preview",
+			"name": "activityLogDiagSettings",
+			"location": "global",
+			"properties": {
+				"workspaceId": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/resourcegroups/test-sentinel/providers/microsoft.operationalinsights/workspaces/testla12356",
+				//"storageAccountId": "[parameters('storageAccountId')]",
+				//"eventHubAuthorizationRuleId": "[parameters('eventHubAuthorizationRuleId')]",
+				//"eventHubName": "[parameters('eventHubName')]",
+				"logs": [
+					{
+						"category": "Administrative",
+						"enabled": true
+					}
+					
+				]
+			}
+		}
+	]
+}
+    
+    
