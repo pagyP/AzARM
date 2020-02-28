@@ -27,7 +27,7 @@
                 "description": "description"
             }
         },
-        "logicAppName": {
+        "logicAppNamePrefix": {
            "type": "string",
            "metadata": {
                 "description": "description"
@@ -55,7 +55,7 @@
       "resourceGroup3": "test3",
       // Logic App Name Expression
       "logicAppSubscription": "[subscription().displayName]",
-      "uniqueLogicAppName": "[concat(parameters('logicAppName'), '-', variables('logicAppSubscription'))]",
+      "uniqueLogicAppName": "[concat(parameters('logicAppNamePrefix'), '-', variables('logicAppSubscription'))]",
       "laName": "[replace(variables('uniqueLogicAppName'), ' ', '-')]"
       
     },
@@ -270,14 +270,14 @@
                             "azureeventgrid": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('eventGridAPIConnector'))]",
                                 "connectionName": "azureeventgrid",
-                                //"id": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/providers/Microsoft.Web/locations/uksouth/managedApis/azureeventgrid"
-                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/uksouth/managedApis/azureeventgrid')]"
+                                //"id": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/providers/Microsoft.Web/locations/westeurope/managedApis/azureeventgrid"
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/westeurope/managedApis/azureeventgrid')]"
                             },
                             "teams": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('teamsAPIConnectionName'))]",
                                 "connectionName": "teams",
-                              // "id": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/providers/Microsoft.Web/locations/uksouth/managedApis/teams"
-                               "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/uksouth/managedApis/teams')]"
+                              // "id": "/subscriptions/f8bf7adc-eeed-4320-b9e4-b30e582ef115/providers/Microsoft.Web/locations/westeurope/managedApis/teams"
+                               "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/westeurope/managedApis/teams')]"
                 }
             }
         }
