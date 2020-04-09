@@ -43,6 +43,9 @@
             {"name": "[concat(variables('routeTable_name_external'),'-internal')]", "addressPrefix": "10.41.64.0/20", "nextHopType": "VnetLocal","nextHopIpAddress": ""},
             {"name": "[concat(variables('routeTable_name_external'),'-appgw')]", "addressPrefix": "10.42.64.0/20", "nextHopType": "none","nextHopIpAddress": ""}
         ],
+        "subnets": [
+            {"name": "[variables('internal-subnet-name')]", "addressPrefix": "[parameters('internal-subnet-prefix')]", "routetable": {"id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_internal'))]"}, "networksecuritygroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_internal'))]"}}
+        ],
         "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00001')]",
         "routeTable_name_internal": "[concat(parameters('vnetname'),'-sub00001-rt001')]",
         "routeTable_name_external": "[concat(parameters('vnetname'),'-sub00001-rt002')]",
