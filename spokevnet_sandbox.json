@@ -35,10 +35,15 @@
     "variables": {
         "mgmt_routes":[
                  {"name": "[concat(variables('routeTable_name_internal'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"},
-                 {"name": "[concat(variables('routeTable_name_internal'),'-internal')]", "addressPrefix": "10.41.64.0/20", "nextHopType": "VnetLocal","nextHopIpAddress": ""}
+                 {"name": "[concat(variables('routeTable_name_internal'),'-internal')]", "addressPrefix": "10.41.64.0/20", "nextHopType": "VnetLocal","nextHopIpAddress": ""},
+                 {"name": "[concat(variables('routeTable_name_internal'),'-appgw')]", "addressPrefix": "10.42.64.0/20", "nextHopType": "none","nextHopIpAddress": ""}
             ],
+        "external_routes":[
+            {"name": "[concat(variables('routeTable_name_external'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"}
+        ],
         "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00001')]",
         "routeTable_name_internal": "[concat(parameters('vnetname'),'-sub00001-rt001')]",
+        "routeTable_name_external": "[concat(parameters('vnetname'),'-sub00001-rt002')]",
         "nsg_name_internal": "[concat(parameters('vnetname'),'-sub00001-nsg001')]"
     },
     "resources": [
@@ -110,6 +115,42 @@
                                 "addressPrefix":              "[variables('mgmt_routes')[copyIndex('routes')].addressPrefix]",
                             "nextHopType":                 "[variables('mgmt_routes')[copyIndex('routes')].nextHopType]",
                             "NextHopIPAddress":          "[variables('mgmt_routes')[copyIndex('routes')].nextHopIPAddress]"
+                            }
+                        }
+                        
+                        
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/1f913984-b1c8-4187-b297-415b71d6d278/resourceGroups/platform-network-vnet-uat/providers/Microsoft.Network/routeTables/gsk-corp-platforms-uat-us6-vnet00001-rt0001'.",
+            "type": "Microsoft.Network/routeTables",
+            "name": "[variables('routeTable_name_external')]",
+            "apiVersion": "2018-02-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                "Application Name": "Routing",
+                "Business Owner": "Platform-Cloud Engineering",
+                "Business Unit ID": "Platform",
+                "Environment": "[parameters('Environment')]",
+                "Resource Function": "Networking"
+            },
+            "scale": null,
+            "properties": {
+                "disableBgpRoutePropagation": true,
+                "copy": [
+                    {
+                        
+                        "name": "routes",
+                        "count": "[length(variables('external_routes'))]",
+                        "input": {
+                            "name": "[variables('external_routes')[copyIndex('routes')].name]",
+                            "properties": {
+                                "addressPrefix":              "[variables('external_routes')[copyIndex('routes')].addressPrefix]",
+                            "nextHopType":                 "[variables('external_routes')[copyIndex('routes')].nextHopType]",
+                            "NextHopIPAddress":          "[variables('external_routes')[copyIndex('routes')].nextHopIPAddress]"
                             }
                         }
                         
