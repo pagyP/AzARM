@@ -15,7 +15,7 @@
             "type": "string"
         },
         "internal-subnet-prefix": {
-            "defaultValue": "10.41.64.0/20",
+            "defaultValue": "10.41.64.0/21",
             "type": "string"
         },
         "Environment": {
@@ -44,12 +44,15 @@
             {"name": "[concat(variables('routeTable_name_external'),'-appgw')]", "addressPrefix": "10.42.64.0/20", "nextHopType": "none","nextHopIpAddress": ""}
         ],
         "subnets": [
-            {"name": "[variables('internal-subnet-name')]", "addressPrefix": "[parameters('internal-subnet-prefix')]", "routetable": {"id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_internal'))]"}, "networksecuritygroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_internal'))]"}}
+            {"name": "[variables('internal-subnet-name')]", "addressPrefix": "[parameters('internal-subnet-prefix')]", "routetable": {"id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_internal'))]"}, "networksecuritygroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_internal'))]"}},
+            {"name": "[variables('external-subnet-name')]", "addressPrefix": "10.41.72.0/21", "routetable": {"id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_external'))]"}, "networksecuritygroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_external'))]"}}
         ],
         "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00001')]",
+        "external-subnet-name": "[concat(parameters('vnetname'),'-sub00002')]",
         "routeTable_name_internal": "[concat(parameters('vnetname'),'-sub00001-rt001')]",
         "routeTable_name_external": "[concat(parameters('vnetname'),'-sub00001-rt002')]",
-        "nsg_name_internal": "[concat(parameters('vnetname'),'-sub00001-nsg001')]"
+        "nsg_name_internal": "[concat(parameters('vnetname'),'-sub00001-nsg001')]",
+        "nsg_name_external": "[concat(parameters('vnetname'),'-sub00002-nsg002')]"
     },
     "resources": [
         {
@@ -70,27 +73,30 @@
                     "addressPrefixes": [
                         "[parameters('vnet_prefix')]"
                     ]
+                    
                 },
-                "subnets": [
+                "enableDdosProtection":false,
+                "enableVmProtection":false,
+                "copy": [
                     {
-                        "name": "[variables('internal-subnet-name')]",
+                        "name": "subnets",
+                        "count": "[length(variables('subnets'))]",
+                        "input": { 
+                        "name": "[variables('subnets')[copyIndex('subnets')].name]",
                         "properties": {
-                            "addressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_internal'))]"
-                            },
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_internal'))]"
-                            }
+                            "addressPrefix": "[variables('subnets')[copyIndex('subnets')].addressPrefix]",
+                            "routeTable":  "[variables('subnets')[copyIndex('subnets')].routeTable]",
+                            "networkSecurityGroup":  "[variables('subnets')[copyIndex('subnets')].networkSecurityGroup]"    
+                        }
                         }
                     }
-                ],
-                "enableDdosProtection": false,
-                "enableVmProtection": false
+                ]
             },
+
             "dependsOn": [
                 "[concat('Microsoft.Network/routeTables/', variables('routeTable_name_internal'))]",
-                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsg_name_internal'))]"
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsg_name_internal'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsg_name_external'))]"
             ]
         },
         {
@@ -169,6 +175,52 @@
             "comments": "Generalized from resource: '/subscriptions/faebcc32-59de-4c64-b40c-7e6296167c9e/resourceGroups/platform-network-vnet-uat/providers/Microsoft.Network/networkSecurityGroups/NSG-Platform-AppGW'.",
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('nsg_name_internal')]",
+            "apiVersion": "2018-02-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                "Application Name": "Network Security",
+                "Business Owner": "Platform-Cloud Engineering",
+                "Business Unit ID": "Platform",
+                "Environment": "[parameters('Environment')]",
+                "Resource Function": "Networking"
+            },
+            "scale": null,
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "inbound-GSK",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
+                            "destinationAddressPrefix": "[parameters('internal-subnet-prefix')]",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "outbound-GSK",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "[parameters('internal-subnet-prefix')]",
+                            "destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/faebcc32-59de-4c64-b40c-7e6296167c9e/resourceGroups/platform-network-vnet-uat/providers/Microsoft.Network/networkSecurityGroups/NSG-Platform-AppGW'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsg_name_external')]",
             "apiVersion": "2018-02-01",
             "location": "[parameters('location')]",
             "tags": {
