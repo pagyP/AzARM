@@ -34,7 +34,8 @@
     },
     "variables": {
         "mgmt_routes":[
-                 {"name": "[concat(variables('routeTable_name_internal'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"}
+                 {"name": "[concat(variables('routeTable_name_internal'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"},
+                 {"name": "[concat(variables('routeTable_name_internal'),'-internal')]", "addressPrefix": "10.41.64.0/20", "nextHopType": "VnetLocal","nextHopIpAddress": ""}
             ],
         "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00001')]",
         "routeTable_name_internal": "[concat(parameters('vnetname'),'-sub00001-rt001')]",
