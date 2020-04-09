@@ -1,0 +1,168 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": "uksouth",
+            "type": "string"
+        },
+        "vnetname": {
+            "defaultValue": "gsk-corp-platforms-sandbox-us6-vnet00001",
+            "type": "string"
+        },
+        "vnet_prefix": {
+            "defaultValue": "10.41.64.0/20",
+            "type": "string"
+        },
+        "internal-subnet-prefix": {
+            "defaultValue": "10.41.64.0/20",
+            "type": "string"
+        },
+        "Environment": {
+            "defaultValue": "dev",
+            "type": "string"
+        },
+        "DefaultRoute_nextHopIpAddress": {
+            "defaultValue": "10.0.1.1",
+            "type": "string"
+        },
+        
+        "NSG_array_GSKsubnets": {
+            "defaultValue": ["192.168.0.0/24"],
+            "type": "array"
+        }
+    },
+    "variables": {
+        "mgmt_routes":[
+                 {"name": "[concat(variables('routeTable_name_internal'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"}
+            ],
+        "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00001')]",
+        "routeTable_name_internal": "[concat(parameters('vnetname'),'-sub00001-rt001')]",
+        "nsg_name_internal": "[concat(parameters('vnetname'),'-sub00001-nsg001')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('vnetname')]",
+            "apiVersion": "2018-02-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                "Application Name": "Network",
+                "Business Owner": "Platform-Cloud Engineering",
+                "Business Unit ID": "Platform",
+                "Environment": "[parameters('Environment')]",
+                "Resource Function": "Networking"
+            },
+            "scale": null,
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnet_prefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('internal-subnet-name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('internal-subnet-prefix')]",
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_internal'))]"
+                            },
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_internal'))]"
+                            }
+                        }
+                    }
+                ],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/routeTables/', variables('routeTable_name_internal'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsg_name_internal'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/1f913984-b1c8-4187-b297-415b71d6d278/resourceGroups/platform-network-vnet-uat/providers/Microsoft.Network/routeTables/gsk-corp-platforms-uat-us6-vnet00001-rt0001'.",
+            "type": "Microsoft.Network/routeTables",
+            "name": "[variables('routeTable_name_internal')]",
+            "apiVersion": "2018-02-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                "Application Name": "Routing",
+                "Business Owner": "Platform-Cloud Engineering",
+                "Business Unit ID": "Platform",
+                "Environment": "[parameters('Environment')]",
+                "Resource Function": "Networking"
+            },
+            "scale": null,
+            "properties": {
+                "disableBgpRoutePropagation": true,
+                "copy": [
+                    {
+                        
+                        "name": "routes",
+                        "count": "[length(variables('mgmt_routes'))]",
+                        "input": {
+                            "name": "[variables('mgmt_routes')[copyIndex('routes')].name]",
+                            "properties": {
+                                "addressPrefix":              "[variables('mgmt_routes')[copyIndex('routes')].addressPrefix]",
+                            "nextHopType":                 "[variables('mgmt_routes')[copyIndex('routes')].nextHopType]",
+                            "NextHopIPAddress":          "[variables('mgmt_routes')[copyIndex('routes')].nextHopIPAddress]"
+                            }
+                        }
+                        
+                        
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/faebcc32-59de-4c64-b40c-7e6296167c9e/resourceGroups/platform-network-vnet-uat/providers/Microsoft.Network/networkSecurityGroups/NSG-Platform-AppGW'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsg_name_internal')]",
+            "apiVersion": "2018-02-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                "Application Name": "Network Security",
+                "Business Owner": "Platform-Cloud Engineering",
+                "Business Unit ID": "Platform",
+                "Environment": "[parameters('Environment')]",
+                "Resource Function": "Networking"
+            },
+            "scale": null,
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "inbound-GSK",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
+                            "destinationAddressPrefix": "[parameters('internal-subnet-prefix')]",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "outbound-GSK",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "[parameters('internal-subnet-prefix')]",
+                            "destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        }
+    ]
+}
