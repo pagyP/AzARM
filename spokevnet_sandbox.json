@@ -33,13 +33,15 @@
         }
     },
     "variables": {
-        "mgmt_routes":[
-                 {"name": "[concat(variables('routeTable_name_internal'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"},
-                 {"name": "[concat(variables('routeTable_name_internal'),'-internal')]", "addressPrefix": "10.41.64.0/20", "nextHopType": "VnetLocal","nextHopIpAddress": ""},
-                 {"name": "[concat(variables('routeTable_name_internal'),'-appgw')]", "addressPrefix": "10.42.64.0/20", "nextHopType": "none","nextHopIpAddress": ""}
+        "internal_routes":[
+            {"name": "[concat(variables('routeTable_name_internal'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_internal'),'-internal')]", "addressPrefix": "10.41.64.0/20", "nextHopType": "VnetLocal","nextHopIpAddress": ""},
+            {"name": "[concat(variables('routeTable_name_internal'),'-appgw')]", "addressPrefix": "10.42.64.0/20", "nextHopType": "none","nextHopIpAddress": ""}
             ],
         "external_routes":[
-            {"name": "[concat(variables('routeTable_name_external'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"}
+            {"name": "[concat(variables('routeTable_name_external'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_external'),'-internal')]", "addressPrefix": "10.41.64.0/20", "nextHopType": "VnetLocal","nextHopIpAddress": ""},
+            {"name": "[concat(variables('routeTable_name_external'),'-appgw')]", "addressPrefix": "10.42.64.0/20", "nextHopType": "none","nextHopIpAddress": ""}
         ],
         "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00001')]",
         "routeTable_name_internal": "[concat(parameters('vnetname'),'-sub00001-rt001')]",
@@ -108,13 +110,13 @@
                     {
                         
                         "name": "routes",
-                        "count": "[length(variables('mgmt_routes'))]",
+                        "count": "[length(variables('internal_routes'))]",
                         "input": {
-                            "name": "[variables('mgmt_routes')[copyIndex('routes')].name]",
+                            "name": "[variables('internal_routes')[copyIndex('routes')].name]",
                             "properties": {
-                                "addressPrefix":              "[variables('mgmt_routes')[copyIndex('routes')].addressPrefix]",
-                            "nextHopType":                 "[variables('mgmt_routes')[copyIndex('routes')].nextHopType]",
-                            "NextHopIPAddress":          "[variables('mgmt_routes')[copyIndex('routes')].nextHopIPAddress]"
+                            "addressPrefix":              "[variables('internal_routes')[copyIndex('routes')].addressPrefix]",
+                            "nextHopType":                 "[variables('internal_routes')[copyIndex('routes')].nextHopType]",
+                            "NextHopIPAddress":          "[variables('internal_routes')[copyIndex('routes')].nextHopIPAddress]"
                             }
                         }
                         
