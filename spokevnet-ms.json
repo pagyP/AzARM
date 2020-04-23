@@ -774,6 +774,64 @@
             {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet49')]", "addressPrefix": "[parameters('Intranet49_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
             {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet50')]", "addressPrefix": "[parameters('Intranet50_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"}
             ],
+        "ase-routes":[
+             {"name": "[concat(variables('routeTable_name_ase'),'-default')]", "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"},
+             {"name": "[concat(variables('routeTable_name_ase'),'-mgmt')]", "addressPrefix": "[parameters('mgmt-subnet-prefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_ase'),'-internal')]", "addressPrefix": "[parameters('internal-subnet-prefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_ase'),'-external')]", "addressPrefix": "[parameters('external-subnet-prefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_ase'),'-appgw')]",    "addressPrefix": "[parameters('appgw-subnet-prefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet01')]", "addressPrefix": "[parameters('Intranet1_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet02')]", "addressPrefix": "[parameters('Intranet2_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet03')]", "addressPrefix": "[parameters('Intranet3_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet04')]", "addressPrefix": "[parameters('Intranet4_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet05')]", "addressPrefix": "[parameters('Intranet5_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet06')]", "addressPrefix": "[parameters('Intranet6_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet07')]", "addressPrefix": "[parameters('Intranet7_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet08')]", "addressPrefix": "[parameters('Intranet8_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet09')]", "addressPrefix": "[parameters('Intranet9_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet10')]", "addressPrefix": "[parameters('Intranet10_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet11')]", "addressPrefix": "[parameters('Intranet11_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet12')]", "addressPrefix": "[parameters('Intranet12_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet13')]", "addressPrefix": "[parameters('Intranet13_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet14')]", "addressPrefix": "[parameters('Intranet14_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet15')]", "addressPrefix": "[parameters('Intranet15_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet16')]", "addressPrefix": "[parameters('Intranet16_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet17')]", "addressPrefix": "[parameters('Intranet17_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet18')]", "addressPrefix": "[parameters('Intranet18_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet19')]", "addressPrefix": "[parameters('Intranet19_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet20')]", "addressPrefix": "[parameters('Intranet20_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet21')]", "addressPrefix": "[parameters('Intranet21_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet22')]", "addressPrefix": "[parameters('Intranet22_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet23')]", "addressPrefix": "[parameters('Intranet23_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet24')]", "addressPrefix": "[parameters('Intranet24_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet25')]", "addressPrefix": "[parameters('Intranet25_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet26')]", "addressPrefix": "[parameters('Intranet26_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet27')]", "addressPrefix": "[parameters('Intranet27_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet28')]", "addressPrefix": "[parameters('Intranet28_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet29')]", "addressPrefix": "[parameters('Intranet29_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet30')]", "addressPrefix": "[parameters('Intranet30_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet31')]", "addressPrefix": "[parameters('Intranet31_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet32')]", "addressPrefix": "[parameters('Intranet32_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet33')]", "addressPrefix": "[parameters('Intranet33_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet34')]", "addressPrefix": "[parameters('Intranet34_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet35')]", "addressPrefix": "[parameters('Intranet35_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet36')]", "addressPrefix": "[parameters('Intranet36_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet37')]", "addressPrefix": "[parameters('Intranet37_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet38')]", "addressPrefix": "[parameters('Intranet38_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet39')]", "addressPrefix": "[parameters('Intranet39_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet40')]", "addressPrefix": "[parameters('Intranet40_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet41')]", "addressPrefix": "[parameters('Intranet41_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet42')]", "addressPrefix": "[parameters('Intranet42_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet43')]", "addressPrefix": "[parameters('Intranet43_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet44')]", "addressPrefix": "[parameters('Intranet44_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet45')]", "addressPrefix": "[parameters('Intranet45_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet46')]", "addressPrefix": "[parameters('Intranet46_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet47')]", "addressPrefix": "[parameters('Intranet47_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet48')]", "addressPrefix": "[parameters('Intranet48_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet49')]", "addressPrefix": "[parameters('Intranet49_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"},
+            {"name": "[concat(variables('routeTable_name_mgmt'),'-Intranet50')]", "addressPrefix": "[parameters('Intranet50_AddressPrefix')]", "nextHopType": "VirtualAppliance","nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"}
+          
+        ],
         "appgw-subnet-name": "[concat(parameters('vnetname'),'-sub00001-appgw')]",
         "external-subnet-name": "[concat(parameters('vnetname'),'-sub00002-external')]",
         "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00003-internal')]",
@@ -929,448 +987,22 @@
             "scale": null,
             "properties": {
                 "disableBgpRoutePropagation": true,
-                "routes": [
+                "copy": [
                     {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-default')]",
-                        "properties": {
-                            "addressPrefix": "0.0.0.0/0",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('DefaultRoute_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-internal')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "nextHopType": "VnetLocal"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-external')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('external-subnet-prefix')]",
-                            "nextHopType": "VnetLocal"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-appgw')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "nextHopType": "None"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-ase')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet01')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet1_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet02')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet2_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet03')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet3_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet04')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet4_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet05')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet5_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet06')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet6_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet07')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet7_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet08')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet8_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet09')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet9_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet10')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet10_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet11')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet11_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet12')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet12_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet13')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet13_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet14')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet14_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet15')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet15_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet16')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet16_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet17')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet17_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet18')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet18_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet19')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet19_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet20')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet20_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet21')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet21_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet22')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet22_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet23')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet23_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet24')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet24_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet25')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet25_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet26')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet26_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet27')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet27_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet28')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet28_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet29')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet29_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet30')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet30_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet31')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet31_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet32')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet32_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet33')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet33_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet34')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet34_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet35')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet35_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet36')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet36_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet37')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet37_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet38')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet38_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet39')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet39_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet40')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet40_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet41')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet41_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet42')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet42_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet43')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet43_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet44')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet44_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet45')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet45_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet46')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet46_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet47')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet47_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet48')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet48_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet49')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet49_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('routeTable_name_mgmt'),'-Intranet50')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('Intranet50_AddressPrefix')]",
-                            "nextHopType": "VirtualAppliance",
-                            "nextHopIpAddress": "[parameters('Intranet_Route_nextHopIpAddress')]"
-                        }
+                        "name": "routes",
+                        "count": "[length(variables('mgmt_routes'))]",
+                        "input": {
+                            "name": "[variables('mgmt_routes')[copyIndex('routes')].name]",
+                            "properties": {
+                            "addressPrefix":              "[variables('mgmt_routes')[copyIndex('routes')].addressPrefix]",
+                            "nextHopType":                 "[variables('mgmt_routes')[copyIndex('routes')].nextHopType]",
+                            "NextHopIPAddress":          "[variables('mgmt_routes')[copyIndex('routes')].nextHopIPAddress]"
+                            }
+                        }   
                     }
                 ]
             },
-            "dependsOn": [
-            ]
+            "dependsOn": []
         },
         {
             "comments": "Generalized from resource: '/subscriptions/1f913984-b1c8-4187-b297-415b71d6d278/resourceGroups/platform-network-vnet-uat/providers/Microsoft.Network/routeTables/gsk-corp-platforms-uat-us6-vnet00001-rt0001'.",
