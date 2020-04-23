@@ -1062,90 +1062,23 @@
                         "[parameters('dnsserver2')]"
                     ]
                 },
-                "subnets": [
+                "enableDdosProtection": false,
+                "enableVmProtection": false,
+                "copy": [
                     {
-                        "name": "[variables('appgw-subnet-name')]",
+                        "name": "subnets",
+                        "count": "[length(variables('subnets'))]",
+                        "input": { 
+                        "name": "[variables('subnets')[copyIndex('subnets')].name]",
                         "properties": {
-                            "addressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_appgw'))]"
-                            },
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_appgw'))]"
-                            }
+                            "addressPrefix": "[variables('subnets')[copyIndex('subnets')].addressPrefix]",
+                            "routeTable":  "[variables('subnets')[copyIndex('subnets')].routeTable]",
+                            "networkSecurityGroup":  "[variables('subnets')[copyIndex('subnets')].networkSecurityGroup]",
+                            "serviceEndpoints": "[variables('subnets')[copyIndex('subnets')].serviceEndpoints]"    
                         }
-                    },
-                    {
-                        "name": "[variables('external-subnet-name')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('external-subnet-prefix')]",
-                            "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_external'))]"
-                            },
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_external'))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('internal-subnet-name')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_internal'))]"
-                            },
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_internal'))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('mgmt-subnet-name')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_mgmt'))]"
-                            },
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_mgmt'))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('ase-subnet-name')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_ase'))]"
-                            },
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_ase'))]"
-                            },
-                            "serviceEndpoints": [
-                                {
-                                    "service": "Microsoft.Sql",
-                                    "locations": [
-                                        "*"
-                                    ]
-                                },
-                                {
-                                    "service": "Microsoft.Storage",
-                                    "locations": [
-                                        "*"
-                                    ]
-                                },
-                                {
-                                    "service": "Microsoft.EventHub",
-                                    "locations": [
-                                        "*"
-                                    ]
-                                }
-                            ]
                         }
                     }
-                ],
-                "enableDdosProtection": false,
-                "enableVmProtection": false
+                ]
             },
             "dependsOn": [
                 "[concat('Microsoft.Network/routeTables/', variables('routeTable_name_mgmt'))]",
