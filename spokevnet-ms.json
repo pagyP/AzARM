@@ -1020,6 +1020,24 @@
             {"name": "[variables('mgmt-subnet-name')]", "addressPrefix": "[parameters('mgmt-subnet-prefix')]", "routetable": {"id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_mgmt'))]"}, "networksecuritygroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_mgmt'))]"}, "serviceEndpoints": ""},
             {"name": "[variables('ase-subnet-name')]", "addressPrefix": "[parameters('ase-subnet-prefix')]", "routetable": {"id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable_name_ase'))]"}, "networksecuritygroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg_name_ase'))]"}, "serviceEndpoints": [{"service": "Microsoft.sql", "locations": ["*"]}, {"service": "Microsoft.Storage", "locations":["*"]}, {"service": "Microsoft.eventhub", "locations": ["*"]}]}
         ],
+        "appgw_nsgrules": [
+            {"name": "inbound_http_https","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[ "80","443"],"destinationPortRange": "","sourceAddressPrefix": "Internet","destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]","access": "Allow","priority": 100,"direction": "Inbound"},
+            {"name": "appgw_health","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "65200-65535","sourceAddressPrefix": "Internet","destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]","access": "Allow","priority": 101,"direction": "Inbound"},
+            {"name": "Azure_LB_In","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefix": "Internet","destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]","access": "Deny","priority": 103,"direction": "Inbound"},
+            {"name": "outbound_internet","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefix": "Internet","access": "Allow","priority": 100,"direction": "Outbound"},
+            {"name": "outbound-external","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefix": "[parameters('external-subnet-prefix')]","access": "Allow","priority": 101,"direction": "Outbound"},
+            {"name": "outbound-ase","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 102,"direction": "Outbound"},
+            {"name": "outbound-default-drop","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefix": "*","destinationAddressPrefix": "*","access": "Deny","priority": 103,"direction": "Outbound"}
+        ],
+        "external_nsgrules": [
+            {"name": "inbound-appgw","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "","sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefix": "[parameters('external-subnet-prefix')]","access": "Allow","priority": 100,"direction": "Inbound"},
+            {"name": "inbound-mgmt","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":["22","3389"],"destinationPortRange": "","sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]","destinationAddressPrefix": "[parameters('external-subnet-prefix')]","access": "Allow","priority": 101,"direction": "Inbound"},
+            {"name": "Azure_LB_In","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "","sourceAddressPrefix": "Internet","destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]","access": "Deny","priority": 103,"direction": "Inbound"},
+            {"name": "outbound_internet","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "","sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefix": "Internet","access": "Allow","priority": 100,"direction": "Outbound"},
+            {"name": "outbound-external","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "","sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefix": "[parameters('external-subnet-prefix')]","access": "Allow","priority": 101,"direction": "Outbound"},
+            {"name": "outbound-ase","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "","sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 102,"direction": "Outbound"},
+            {"name": "outbound-default-drop","description":"","protocol": "*","sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "","sourceAddressPrefix": "*","destinationAddressPrefix": "*","access": "Deny","priority": 103,"direction": "Outbound"}
+        ],
         "appgw-subnet-name": "[concat(parameters('vnetname'),'-sub00001-appgw')]",
         "external-subnet-name": "[concat(parameters('vnetname'),'-sub00002-external')]",
         "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00003-internal')]",
@@ -1270,128 +1288,33 @@
             },
             "scale": null,
             "properties": {
-                "resourceGuid": "05e6456f-fe89-4c0f-b826-cc4365cd7a2c",
-                "securityRules": [
+                "copy":[
                     {
-                        "name": "Inbound_http_https",
+                    "name":"securityRules",
+                    "count": "[length(variables('appgw_nsgRules'))]",
+                    "input": {        
+                        "name": "[variables('appgw_nsgRules')[copyIndex('securityRules')].name]",
                         "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "Internet",
-                            "destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 100,
-                            "direction": "Inbound",
-                            "destinationPortRanges": [
-                                "80",
-                                "443"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "appgw_health",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "65200-65535",
-                            "sourceAddressPrefix": "Internet",
-                            "destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 101,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "Azure_LB_In",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "AzureLoadBalancer",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 102,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "Inbound_default_drop",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "Internet",
-                            "destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 103,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "outbound_internet",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "destinationAddressPrefix": "Internet",
-                            "access": "Allow",
-                            "priority": 100,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-external",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('external-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 101,
-                            "direction": "Outbound",
-                            "sourcePortRanges": [
-                            ],
-                            "destinationPortRanges": [
-                            ]
-                        }
-                    },
-                    {
-                        "name": "outbound-ase",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 102,
-                            "direction": "Outbound",
-                            "sourcePortRanges": [
-                            ],
-                            "destinationPortRanges": [
-                            ]
-                        }
-                    },
-                    {
-                        "name": "outbound-default-drop",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 103,
-                            "direction": "Outbound"
+                            "description":              "[variables('appgw_nsgRules')[copyIndex('securityRules')].description]",
+                            "protocol":                 "[variables('appgw_nsgRules')[copyIndex('securityRules')].protocol]",
+                            "sourcePortRange":          "[variables('appgw_nsgRules')[copyIndex('securityRules')].sourcePortRange]",
+                            "destinationPortRange":     "[variables('appgw_nsgRules')[copyIndex('securityRules')].destinationPortRange]",
+                            "sourceAddressPrefix":      "[variables('appgw_nsgRules')[copyIndex('securityRules')].sourceAddressPrefix]",
+                            "destinationAddressPrefix": "[variables('appgw_nsgRules')[copyIndex('securityRules')].destinationAddressPrefix]",
+                            "access":                   "[variables('appgw_nsgRules')[copyIndex('securityRules')].access]",
+                            "priority":                 "[variables('appgw_nsgRules')[copyIndex('securityRules')].priority]",                
+                            "direction":                "[variables('appgw_nsgRules')[copyIndex('securityRules')].direction]",
+                            "destinationPortRanges":    "[variables('appgw_nsgRules')[copyIndex('securityRules')].destinationPortRanges]"              
+                            }
                         }
                     }
                 ]
-            },
+            },     
+        
             "dependsOn": [
             ]
         },
+        
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('nsg_name_external')]",
