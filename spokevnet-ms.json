@@ -1040,6 +1040,46 @@
             {"name": "outbound-internal","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('external-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('internal-subnet-prefix')]","access": "Allow","priority": 102,"direction": "Outbound"},
             {"name": "outbound-GSK","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": "[parameters('nsg_array_gsksubnets')]","sourceAddressPrefix": "","destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]","destinationAddressPrefix": "","access": "Allow","priority": 103,"direction": "Outbound"}
         ],
+        "internal_nsgrules":[
+            {"name": "inbound-appgw","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('internal-subnet-prefix')]","access": "Deny","priority": 100,"direction": "Inbound"},
+            {"name": "inbound-mgmt","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":["22","3389"],"destinationPortRange": "","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('internal-subnet-prefix')]","access": "Allow","priority": 101,"direction": "Inbound"},
+            {"name": "inbound-internal","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('external-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('internal-subnet-prefix')]","access": "Allow","priority": 102,"direction": "Inbound"},
+            {"name": "inbound-GSK","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": "[parameters('nsg_array_gsksubnets')]","sourceAddressPrefix": "","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('internal-subnet-prefix')]","access": "Allow","priority": 103,"direction": "Inbound"},
+            {"name": "outbound-appgw","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('internal-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]","access": "Deny","priority": 100,"direction": "Outbound"},
+            {"name": "outbound-mgmt","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('internal-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]","access": "Deny","priority": 101,"direction": "Outbound"},
+            {"name": "outbound-internal","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('internal-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('external-subnet-prefix')]","access": "Allow","priority": 102,"direction": "Outbound"},
+            {"name": "outbound-GSK","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('internal-subnet-prefix')]","destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]","destinationAddressPrefix": "","access": "Allow","priority": 103,"direction": "Outbound"}
+        ],
+        "mgmt_nsgrules":[
+            {"name": "inbound-appgw","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]","access": "Deny","priority": 100,"direction": "Inbound"},
+            {"name": "inbound-internal","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('internal-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]","access": "Deny","priority": 101,"direction": "Inbound"},
+            {"name": "inbound-external","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('external-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]","access": "Deny","priority": 102,"direction": "Inbound"},
+            {"name": "inbound-GSK","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": "[parameters('nsg_array_gsksubnets')]","sourceAddressPrefix": "","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]","access": "Allow","priority": 103,"direction": "Inbound"},
+            {"name": "outbound-appgw","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]","access": "Deny","priority": 100,"direction": "Outbound"},
+            {"name": "outbound-internal","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":["22","3389"],"destinationPortRange": "","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('internal-subnet-prefix')]","access": "Allow","priority": 101,"direction": "Outbound"},
+            {"name": "outbound-external","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":["22","3389"],"destinationPortRange": "","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('external-subnet-prefix')]","access": "Allow","priority": 102,"direction": "Outbound"},
+            {"name": "outbound-GSK","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]","destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]","destinationAddressPrefix": "","access": "Allow","priority": 103,"direction": "Outbound"}
+        ],
+        "ase_nsgrules":[
+            {"name": "inbound-appgw","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 100,"direction": "Inbound"},
+            {"name": "inbound-mgmt","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 101,"direction": "Inbound"},
+            {"name": "inbound-internal","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('internal-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 102,"direction": "Inbound"},
+            {"name": "inbound-GSK","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": "[parameters('nsg_array_gsksubnets')]","sourceAddressPrefix": "","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 103,"direction": "Inbound"},
+            {"name": "inbound-AppServiceManagement","description":"","protocol": "Tcp","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":["454","455"],"destinationPortRange": "","sourceAddressPrefixes":[],"sourceAddressPrefix": "AppServiceManagement","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 104,"direction": "Inbound"},
+            {"name": "inbound-ASEintrasubnet","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes":[],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes":[],"destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 105,"direction": "Inbound"},
+            {"name": "Azure_LB_In","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "16001","sourceAddressPrefixes":[],"sourceAddressPrefix": "AzureLoadBalancer","destinationAddressPrefixes":[],"destinationAddressPrefix": "*","access": "Allow","priority": 106,"direction": "Inbound"},
+            {"name": "Inbound_default_drop","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "*","destinationAddressPrefixes": [],"destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Deny","priority": 107,"direction": "Inbound"},
+            {"name": "outbound-appgw","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]","access": "Allow","priority": 100,"direction": "Outbound"},
+            {"name": "outbound-mgmt","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]","access": "Allow","priority": 101,"direction": "Outbound"},
+            {"name": "outbound-internal","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "[parameters('internal-subnet-prefix')]","access": "Allow","priority": 102,"direction": "Outbound"},
+            {"name": "outbound-GSK","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]","destinationAddressPrefix": "","access": "Allow","priority": 103,"direction": "Outbound"},
+            {"name": "outbound-ASEintrasubnet","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "[parameters('ase-subnet-prefix')]","access": "Allow","priority": 104,"direction": "Outbound"},
+            {"name": "outbound_internet","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "Internet","access": "Allow","priority": 105,"direction": "Outbound"},
+            {"name": "outbound_eventhub_endpoint","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":["5671","5672","443"],"destinationPortRange": "","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "EventHub","access": "Allow","priority": 106,"direction": "Outbound"},
+            {"name": "outbound_sql_endpoint","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "1433","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "SQL","access": "Allow","priority": 107,"direction": "Outbound"},
+            {"name": "outbound_storage_endpoint","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":["80","443"],"destinationPortRange": "","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "Storage","access": "Allow","priority": 108,"direction": "Outbound"},
+            {"name": "outbound_default_drop","description":"","protocol": "*","sourcePortRanges": [],"sourcePortRange": "*","destinationPortRanges":[],"destinationPortRange": "*","sourceAddressPrefixes": [],"sourceAddressPrefix": "[parameters('ase-subnet-prefix')]","destinationAddressPrefixes": [],"destinationAddressPrefix": "*","access": "Deny","priority": 109,"direction": "Outbound"}
+        ],
         "appgw-subnet-name": "[concat(parameters('vnetname'),'-sub00001-appgw')]",
         "external-subnet-name": "[concat(parameters('vnetname'),'-sub00002-external')]",
         "internal-subnet-name": "[concat(parameters('vnetname'),'-sub00003-internal')]",
@@ -1175,8 +1215,6 @@
                     }
                 ]
             },
-           
-                   
             "dependsOn": [
             ]
         },
@@ -1315,11 +1353,9 @@
                     }
                 ]
             },     
-        
             "dependsOn": [
             ]
         },
-        
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('nsg_name_external')]",
@@ -1359,7 +1395,6 @@
                     }
                 ]
             },     
-        
             "dependsOn": [
             ]
         },
@@ -1377,116 +1412,31 @@
             },
             "scale": null,
             "properties": {
-                "securityRules": [
+                "copy":[
                     {
-                        "name": "inbound-appgw",
+                    "name":"securityRules",
+                    "count": "[length(variables('internal_nsgRules'))]",
+                    "input": {        
+                        "name": "[variables('internal_nsgRules')[copyIndex('securityRules')].name]",
                         "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 100,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "inbound-mgmt",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 101,
-                            "direction": "Inbound",
-                            "destinationPortRanges": [
-                                "22",
-                                "3389"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "inbound-external",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('external-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 102,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "inbound-GSK",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
-                            "destinationAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 103,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-appgw",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 100,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-mgmt",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 101,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-internal",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('external-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 102,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-GSK",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
-                            "access": "Allow",
-                            "priority": 103,
-                            "direction": "Outbound"
+                            "description":              "[variables('internal_nsgRules')[copyIndex('securityRules')].description]",
+                            "protocol":                 "[variables('internal_nsgRules')[copyIndex('securityRules')].protocol]",
+                            "sourcePortRange":          "[variables('internal_nsgRules')[copyIndex('securityRules')].sourcePortRange]",
+                            "destinationPortRange":     "[variables('internal_nsgRules')[copyIndex('securityRules')].destinationPortRange]",
+                            "sourceAddressPrefix":      "[variables('internal_nsgRules')[copyIndex('securityRules')].sourceAddressPrefix]",
+                            "destinationAddressPrefix": "[variables('internal_nsgRules')[copyIndex('securityRules')].destinationAddressPrefix]",
+                            "access":                   "[variables('internal_nsgRules')[copyIndex('securityRules')].access]",
+                            "priority":                 "[variables('internal_nsgRules')[copyIndex('securityRules')].priority]",                
+                            "direction":                "[variables('internal_nsgRules')[copyIndex('securityRules')].direction]",
+                            "destinationPortRanges":    "[variables('internal_nsgRules')[copyIndex('securityRules')].destinationPortRanges]",
+                            "sourcePortRanges":         "[variables('internal_nsgRules')[copyIndex('securityRules')].sourcePortRanges]",
+                            "sourceAddressPrefixes":    "[variables('internal_nsgRules')[copyIndex('securityRules')].sourceAddressPrefixes]",
+                            "destinationAddressPrefixes": "[variables('internal_nsgRules')[copyIndex('securityRules')].destinationAddressPrefixes]"          
+                            }
                         }
                     }
                 ]
-            },
+            },     
             "dependsOn": [
             ]
         },
@@ -1504,119 +1454,31 @@
             },
             "scale": null,
             "properties": {
-                "securityRules": [
+                "copy":[
                     {
-                        "name": "inbound-appgw",
+                    "name":"securityRules",
+                    "count": "[length(variables('mgmt_nsgRules'))]",
+                    "input": {        
+                        "name": "[variables('mgmt_nsgRules')[copyIndex('securityRules')].name]",
                         "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 100,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "inbound-internal",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 101,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "inbound-external",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('external-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 102,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "inbound-GSK",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
-                            "destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 103,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-appgw",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 100,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-internal",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 101,
-                            "direction": "Outbound",
-                            "destinationPortRanges": [
-                                "22",
-                                "3389"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "outbound-external",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('external-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 102,
-                            "direction": "Outbound",
-                            "destinationPortRanges": [
-                                "22",
-                                "3389"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "outbound-GSK",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
-                            "access": "Allow",
-                            "priority": 103,
-                            "direction": "Outbound"
+                            "description":              "[variables('mgmt_nsgRules')[copyIndex('securityRules')].description]",
+                            "protocol":                 "[variables('mgmt_nsgRules')[copyIndex('securityRules')].protocol]",
+                            "sourcePortRange":          "[variables('mgmt_nsgRules')[copyIndex('securityRules')].sourcePortRange]",
+                            "destinationPortRange":     "[variables('mgmt_nsgRules')[copyIndex('securityRules')].destinationPortRange]",
+                            "sourceAddressPrefix":      "[variables('mgmt_nsgRules')[copyIndex('securityRules')].sourceAddressPrefix]",
+                            "destinationAddressPrefix": "[variables('mgmt_nsgRules')[copyIndex('securityRules')].destinationAddressPrefix]",
+                            "access":                   "[variables('mgmt_nsgRules')[copyIndex('securityRules')].access]",
+                            "priority":                 "[variables('mgmt_nsgRules')[copyIndex('securityRules')].priority]",                
+                            "direction":                "[variables('mgmt_nsgRules')[copyIndex('securityRules')].direction]",
+                            "destinationPortRanges":    "[variables('mgmt_nsgRules')[copyIndex('securityRules')].destinationPortRanges]",
+                            "sourcePortRanges":         "[variables('mgmt_nsgRules')[copyIndex('securityRules')].sourcePortRanges]",
+                            "sourceAddressPrefixes":    "[variables('mgmt_nsgRules')[copyIndex('securityRules')].sourceAddressPrefixes]",
+                            "destinationAddressPrefixes": "[variables('mgmt_nsgRules')[copyIndex('securityRules')].destinationAddressPrefixes]"          
+                            }
                         }
                     }
                 ]
-            },
+            },     
             "dependsOn": [
             ]
         },
@@ -1634,255 +1496,31 @@
             },
             "scale": null,
             "properties": {
-                "securityRules": [
+                "copy":[
                     {
-                        "name": "inbound-appgw",
+                    "name":"securityRules",
+                    "count": "[length(variables('ase_nsgRules'))]",
+                    "input": {        
+                        "name": "[variables('ase_nsgRules')[copyIndex('securityRules')].name]",
                         "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 100,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "inbound-mgmt",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 101,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [
-                            ]
-                        }
-                    },
-                    {
-                        "name": "inbound-internal",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 102,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "inbound-GSK",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 104,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "inbound-AppServiceManagement",
-                        "properties": {
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "AppServiceManagement",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 105,
-                            "direction": "Inbound",
-                            "destinationPortRanges": [
-                                "454",
-                                "455"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "inbound-ASEintrasubnet",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 106,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "Azure_LB_In",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "16001",
-                            "sourceAddressPrefix": "AzureLoadBalancer",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 107,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "Inbound_default_drop",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Deny",
-                            "priority": 108,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-appgw",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('appgw-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 100,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-mgmt",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('mgmt-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 101,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-internal",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('internal-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 102,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-GSK",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefixes": "[parameters('NSG_array_GSKsubnets')]",
-                            "access": "Allow",
-                            "priority": 104,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound-ASEintrasubnet",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "access": "Allow",
-                            "priority": 105,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound_internet",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "Internet",
-                            "access": "Allow",
-                            "priority": 106,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound_eventhub_endpoint",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "EventHub",
-                            "access": "Allow",
-                            "priority": 107,
-                            "direction": "Outbound",
-                            "destinationPortRanges": [
-                                "5671",
-                                "5672",
-                                "443"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "outbound_sql_endpoint",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "1433",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "SQL",
-                            "access": "Allow",
-                            "priority": 108,
-                            "direction": "Outbound"
-                        }
-                    },
-                    {
-                        "name": "outbound_storage_endpoint",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "Storage",
-                            "access": "Allow",
-                            "priority": 109,
-                            "direction": "Outbound",
-                            "destinationPortRanges": [
-                                "80",
-                                "443"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "Outbound_default_drop",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('ase-subnet-prefix')]",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 110,
-                            "direction": "Outbound"
+                            "description":              "[variables('ase_nsgRules')[copyIndex('securityRules')].description]",
+                            "protocol":                 "[variables('ase_nsgRules')[copyIndex('securityRules')].protocol]",
+                            "sourcePortRange":          "[variables('ase_nsgRules')[copyIndex('securityRules')].sourcePortRange]",
+                            "destinationPortRange":     "[variables('ase_nsgRules')[copyIndex('securityRules')].destinationPortRange]",
+                            "sourceAddressPrefix":      "[variables('ase_nsgRules')[copyIndex('securityRules')].sourceAddressPrefix]",
+                            "destinationAddressPrefix": "[variables('ase_nsgRules')[copyIndex('securityRules')].destinationAddressPrefix]",
+                            "access":                   "[variables('ase_nsgRules')[copyIndex('securityRules')].access]",
+                            "priority":                 "[variables('ase_nsgRules')[copyIndex('securityRules')].priority]",                
+                            "direction":                "[variables('ase_nsgRules')[copyIndex('securityRules')].direction]",
+                            "destinationPortRanges":    "[variables('ase_nsgRules')[copyIndex('securityRules')].destinationPortRanges]",
+                            "sourcePortRanges":         "[variables('ase_nsgRules')[copyIndex('securityRules')].sourcePortRanges]",
+                            "sourceAddressPrefixes":    "[variables('ase_nsgRules')[copyIndex('securityRules')].sourceAddressPrefixes]",
+                            "destinationAddressPrefixes": "[variables('ase_nsgRules')[copyIndex('securityRules')].destinationAddressPrefixes]"          
+                            }
                         }
                     }
                 ]
-            },
+            },     
             "dependsOn": [
             ]
         }
