@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/firewallPolicies",
+            "apiVersion": "2020-05-01",
+            "name": "fwpol-01",
+            "location": "UK South",
+            "properties": {
+                "threatIntelMode": "Deny"
+            }
+         },
+         {
+             "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+             "apiVersion": "2020-05-01",
+             "name": "[concat('fwpol-01', '/', 'SFTPRuleCollection-Group')]",
+             "location": "UK South",
+             "dependsOn": [
+                 "[resourceId('Microsoft.Network/firewallPolicies','fwpol-01')]"
+             ],
+             "properties": {
+                 "priority": 100,
+                 "ruleCollections": [
+                    { 
+                        "action": {
+                            "type": "DNAT"
+                        },
+                        "ruleCollectionType": "FirewallPolicyNatRuleCollection",
+                        "name": "SFTP-DNAT-Collection",
+                        "priority": 100,
+                        "rules": [
+                            { 
+                                "ruleType": "NatRule",
+                                "ipProtocols": [
+                                    "TCP"
+                                ],
+                                "destinationAddresses": [
+                                    "217.80.90.10"
+                                ],
+                                "destinationPorts": [
+                                    "22"
+                                ],
+                                "translatedAddress": "10.10.10.10",
+                                "translatedPort": "22",
+                                "name": "SFTP-Server-TCP22",
+                                "sourceAddresses": [
+                                    "80.90.10.10"
+                                ]
+                            }
+                        ]
+                    }
+                    
+
+                 ]
+
+             }
+         }
+    ],
+    "outputs": {}
+}
