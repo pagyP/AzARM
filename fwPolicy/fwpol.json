@@ -53,10 +53,52 @@
                             }
                         ]
                     }
-                    
-
                  ]
+             }
+         },
+         {
+             "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+             "apiVersion": "2020-05-01",
+             "name": "[concat('fwpol-01', '/', 'DTLRuleCollection-Group')]",
+             "location": "UK South",
+             "dependsOn": [
+                 "[resourceId('Microsoft.Network/firewallPolicies','fwpol-01')]"
+             ],
+             "properties": {
+                 "priority": 200,
+                 "ruleCollections": [
+                     {
+                         "action": {
+                             "type": "Allow"
+                         },
+                         "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+                         "name": "DTLAllowedURLS-Collection",
+                         "priority": 100,
+                         
+                         "rules": [
+                             
+                             {
+                                 "ruleType": "ApplicationRule",
+                                 
+                                 "targetFqdns": [
+                                     "*.microsoft.com"
+                                 ],
+                                 "sourceAddresses": [
+                                     "10.10.10.0/24"
+                                 ],
+                                 "name": "Allowed URLS",
+                                 "protocols": [
+                                     {
+                                         "protocolType": "Https",
+                                         "port": "443"
+                                     }
 
+                                 ]
+                             }
+                         ]
+
+                     }
+                 ]
              }
          }
     ],
