@@ -1,0 +1,71 @@
+{
+    "mode": "All",
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "equals": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "field": "type"
+          },
+          {
+            "field": "name",
+            "notIn": [
+              "AzureFirewallSubnet",
+              "GatewaySubnet",
+              "AzureBastionSubnet"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "equals": "Allow",
+                "field": "Microsoft.Network/networkSecurityGroups/securityRules/access"
+              },
+              {
+                "equals": "Inbound",
+                "field": "Microsoft.Network/networkSecurityGroups/securityRules/direction"
+              },
+              {
+                "anyOf": [
+                  {
+                    "equals": "*",
+                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange"
+                  },
+                  {
+                    "not": {
+                      "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]",
+                      "notEquals": "*"
+                    }
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefix",
+                    "in": [
+                      "*",
+                      "Internet"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefixes[*]",
+                      "notIn": [
+                        "*",
+                        "Internet"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    },
+    "parameters": {}
+  }

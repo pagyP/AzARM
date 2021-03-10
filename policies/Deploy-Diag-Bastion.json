@@ -1,95 +1,92 @@
 {
-    "properties": {
-      "displayName": "Deploy-Diagnostics-ActivityLog",
-      "policyType": "Custom",
-      "mode": "All",
-      "description": "Ensures that Activity Log Diagnostics settings are set to push logs into Log Analytics",
-      "metadata": {
-        "createdBy": "bb5d00ab-a75e-48db-bd90-ec3c75915609",
-        "createdOn": "2020-11-06T17:00:48.8000927Z",
-        "updatedBy": null,
-        "updatedOn": null
-      },
-      "parameters": {
-        "logAnalytics": {
-          "type": "String",
-          "metadata": {
-            "displayName": "Primary Log Analytics workspace",
-            "description": "Select Log Analytics workspace from dropdown list",
-            "strongType": "omsWorkspace"
-          }
-        }
-      },
-      "policyRule": {
-        "if": {
+  "mode": "All",
+  "policyRule": {
+    "if": {
+      "field": "type",
+      "equals": "Microsoft.Network/bastionHosts"
+    },
+    "then": {
+      "effect": "deployIfNotExists",
+      "details": {
+        "type": "Microsoft.Insights/diagnosticSettings",
+        "name": "setByPolicy",
+        "existenceCondition": {
           "allOf": [
             {
-              "field": "type",
-              "equals": "Microsoft.Network/bastionHosts"
+              "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+              "equals": "true"
+            },
+            {
+              "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+              "equals": "[parameters('logAnalytics')]"
             }
           ]
         },
-        "then": {
-          "effect": "deployIfNotExists",
-          "details": {
-            "type": "Microsoft.Insights/diagnosticSettings",
-            "name": "setByPolicy",
-            "existenceCondition": {
-              "allOf": [
-                {
-                  "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
-                  "equals": "true"
+        "roleDefinitionIds": [
+          "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+        ],
+        "deployment": {
+          "properties": {
+            "mode": "incremental",
+            "template": {
+              "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "parameters": {
+                "resourceName": {
+                  "type": "string"
                 },
-                {
-                  "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
-                  "equals": "[parameters('logAnalytics')]"
+                "logAnalytics": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
                 }
-              ]
-            },
-            "deployment": {
-              "location": "northeurope",
-              "properties": {
-                "mode": "incremental",
-                "template": {
-                  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
-                  "contentVersion": "1.0.0.0",
-                  "parameters": {
-                    "logAnalytics": {
-                      "type": "string"
-                    }
-                  },
-                  "variables": {},
-                  "resources": [
-                    {
-                      "name": "bastionLogsToLogAnalytics",
-                      "type": "Microsoft.Insights/diagnosticSettings",
-                      "apiVersion": "2017-05-01-preview",
-                      "location": "Global",
-                      "properties": {
-                        "workspaceId": "[parameters('logAnalytics')]",
-                        "logs": [
-                          {
-                            "category": "BastionAuditLogs",
-                            "enabled": true
-                          }
-                        ]
+              },
+              "variables": {},
+              "resources": [
+                {
+                  "type": "Microsoft.Network/bastionHosts/providers/diagnosticSettings",
+                  "apiVersion": "2017-05-01-preview",
+                  "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/setByPolicy')]",
+                  "location": "[parameters('location')]",
+                  "dependsOn": [],
+                  "properties": {
+                    "workspaceId": "[parameters('logAnalytics')]",
+                    "logs": [
+                      {
+                        "category": "BastionAuditLogs",
+                        "enabled": true
                       }
-                    }
-                  ],
-                  "outputs": {}
-                },
-                "parameters": {
-                  "logAnalytics": {
-                    "value": "[parameters('logAnalytics')]"
+                    ]
                   }
                 }
-              }
+              ],
+              "outputs": {}
             },
-            "roleDefinitionIds": [
-              "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
-            ]
+            "parameters": {
+              "logAnalytics": {
+                "value": "[parameters('logAnalytics')]"
+              },
+              "location": {
+                "value": "[field('location')]"
+              },
+              "resourceName": {
+                "value": "[field('name')]"
+              }
+            }
           }
         }
       }
     }
+  },
+  "parameters": {
+    "logAnalytics": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Log Analytics workspace",
+        "description": "Select the Log Analytics workspace from dropdown list",
+        "strongType": "omsWorkspace"
+      }
+    }
   }
+}
